@@ -114,7 +114,9 @@ class Element(List):
     def setCategory(self, category):
         self.category = category
 
-    def deserialize(self, infile):
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
         # Read a single line and add the info to a new Property of an Element child class as long it is not an 'End:'
         # line. This is intended to be used only in the child classes in super() or overridden in the child class.
         currentLine = infile.readline(self)
@@ -133,33 +135,43 @@ class Element(List):
         outfile.write('End:\n')
         pass
 
-    def copy(self, category):
+    def add(self, a):
+        list.append(a)
+
+    def remove(self, a):
+        try:
+            list.remove(a)
+        except LookupError:
+            print("Property not found.")
+
+    def copy(self, a):
         # Copy properties to a new instance of Element
-        Subwatershed['elements'].list.append(Subwatershed['elements'])
+        Subwatershed['elements'].list.append(a)
 
 
 class Basin(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Basin, Element).__init__('Basin',None)
-
-    def add(self):
-        pass
-
-    def remove(self):
-        pass
+        super(Basin, Element).deserialize(currentLine, basinsrc)
 
 
 class Subbasin(Element):
-    def __init__(self, basinsrc):
+    def __init__(self, currentLine, basinsrc):
         super(Subbasin, Element).__init__('Subbasin',None)
         self.area = Property('Area')
         self.downstream = Property('Downstream')
         self.curvenum = Property('Curve Number')
         self.impervious = Property('Percent Impervious Area')
-        self.staticProperties = [area.name, downstream.name, curvenum.name, impervious.name]
-        self.deserialize(basinsrc)
+        self.canvasx = Property('Canvas X')
+        self.canvasy = Property('Canvas Y')
+        self.canopy = Property('Canopy')
+        self.staticProperties = [area.name, downstream.name, curvenum.name, impervious.name, canvasx.name, canvasy.name,
+                                 canopy.name]
+        self.deserialize(currentLine, basinsrc)
 
-    def deserialize(self, infile):
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
         # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
         currentLine = infile.readline(self)
         while not currentLine == 'End:':
@@ -171,68 +183,276 @@ class Subbasin(Element):
 
     def add(self, a):
         if isinstance(a,Property):
-            if a.getName == area.name:
+            if a.getName == self.area.name:
                 self.area.setValue(a.getValue())
-                super(Subbasin, List).append(self.area)
-            elif a.getName == downstream.name:
+                super(Subbasin, self).add(area)
+            elif a.getName == self.downstream.name:
                 self.downstream.setValue(a.getValue())
-                super(Subbasin, List).append(self.downstream)
-            elif a.getName == curvenum.name:
+                super(Subbasin, self).add(downstream)
+            elif a.getName == self.curvenum.name:
                 self.curvenum.setValue(a.getValue())
-                super(Subbasin, List).append(self.curvenum)
-            elif a.getName == impervious.name:
+                super(Subbasin, self).add(curvenum)
+            elif a.getName == self.impervious.name:
                 self.impervious.setValue(a.getValue())
-                super(Subbasin, List).append(self.impervious)
+                super(Subbasin, self).add(impervious)
+            elif a.getName == self.canvasx.name:
+                self.canvasx.setValue(a.getValue())
+                super(Subbasin, self).add(canvasx)
+            elif a.getName == self.canvasy.name:
+                self.canvasy.setValue(a.getValue())
+                super(Subbasin, self).add(canvasy)
+            elif a.getName == self.canopy.name:
+                self.canopy.setValue(a.getValue())
+                super(Subbasin, self).add(canopy)
             else:
-                super(Subbasin,List).append(a)
+                super(Subbasin, self).add(a)
 
     def remove(self, a):
         if isinstance(a,Property):
-            if a.getName == 'area':
-                self.area = None
+            if a.getName == self.area.name:
+                self.area.setValue(None)
+            elif a.getName == self.downstream.name:
+                self.downstream.setValue(None)
+            elif a.getName == self.curvenum.name:
+                self.curvenum.setValue(None)
+            elif a.getName == self.impervious.name:
+                self.impervious.setValue(None)
+            elif a.getName == self.canvasx.name:
+                self.canvasx.setValue(None)
+            elif a.getName == self.canvasy.name:
+                self.canvasy.setValue(None)
+            elif a.getName == self.canopy.name:
+                self.canopy.setValue(None)
+            else:
+                try:
+                    super(Subbasin, self).remove(a)
+                except LookupError:
+                    print("Property not found.")
 
-    def updateSubbasin(self, areaval, dsval, cnval, impval):
+    def divideSubbasin(self, areaval, dsval, cnval, impval):
         #may need to be modified once I figure out exactly how this will be used
-        self.area.setValue(areaval)
-        self.downstream.setValue(dsval)
-        self.curvenum.setValue(cnval)
-        self.impervious.setValue(impval)
+        s = Subbasin.newSubbasin(self)
+        j = Junction.newJunction(self)
+        r = Reservoir.newReservoir(self)
+        self.area.setValue(self.area.getAsFloat() - s.area.getAsFloat())
+        self.downstream.setValue('J ' + self.downstream.getName())
+
+    @classmethod
+    def newSubbasin(cls, s):
+        super(Subbasin, self).copy(s)
+        self.setIdentifier(s.getIdentifier + 'MWRD')
+        self.area.setValue(Subwatershed['redevelopment'] * s.area)
+        self.downstream.setValue('Reservoir ' + s.downstream)
+        self.canopy.setValue('SMA')
+        #need to add insert() to Element
+        self.list.insert(self.list.index(self.canopy) + 1, [['Initial Canopy Storage Percent', 0],['Canopy Maximum Storage',
+                                                                                               0.52],['End Canopy','']])
+        self.curvenum.setValue(Subwatershed['curvenumber'])
 
 
 class Junction(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Junction, self).__init__('Junction', None)
         downstream = Property(None)
+        self.staticProperties = [downstream.name]
+        self.deserialize(currentLine, basinsrc)
+
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
+        # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
+        currentLine = infile.readline(self)
+        while not currentLine == 'End:':
+            p = Property(None)
+            lineList = currentLine.split(': ').strip()
+            p.setName(lineList[0])
+            p.setValue(lineList[1])
+            self.add(p)
+
+    def add(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(a.getValue())
+                super(Junction, self).add(self.downstream)
+            else:
+                super(Junction, self).add(a)
+
+    def remove(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(None)
+            else:
+                try:
+                    super(Junction, self).remove(a)
+                except LookupError:
+                    print("Property not found.")
+
+    @classmethod
+    def newJunction(cls, s):
+        super(Junction, self).__init__('Junction', 'J ' + s.getIdentifier)
+        downstream = Property(s.downstream)
+        super(Junction, self).add(Property.newProperty('Canvas X', s.canvasx))
+        super(Junction, self).add(Property.newProperty('Canvas Y', s.canvasy))
+        super(Junction, self).add(downstream)
+
 
 class Reservoir(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Reservoir, self).__init__('Reservoir', None)
         downstream = Property(None)
         storageoutflow = Property(None)
+        self.staticProperties = [downstream.name, storageoutflow.name]
+        self.deserialize(currentLine, basinsrc)
+
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
+        # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
+        currentLine = infile.readline(self)
+        while not currentLine == 'End:':
+            p = Property(None)
+            lineList = currentLine.split(': ').strip()
+            p.setName(lineList[0])
+            p.setValue(lineList[1])
+            self.add(p)
+
+    def add(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(a.getValue())
+                super(Reservoir, self).append(self.downstream)
+            elif a.getName == storageoutflow.name:
+                self.storageoutflow.setValue(a.getValue())
+                super(Reservoir, self).add(self.storageoutflow)
+            else:
+                super(Reservoir, self).add(a)
+
+    def remove(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(None)
+                super(Element, self).add(self.downstream)
+            elif a.getName == storageoutflow.name:
+                self.storageoutflow.setValue(None)
+            else:
+                try:
+                    super(Reservoir, self).remove(a)
+                except LookupError:
+                    print("Property not found.")
+
+    @classmethod
+    def newReservoir(cls, s):
+        super(Reservoir, self).__init__('Reservoir', 'Reservoir ' + s.getIdentifier)
+        downstream = Property('J ' + s.downstream)
+        storageoutflow = Property('Storage-Outflow Table')
+        storageoutflow.setValue(s.getIdentifier + 'MWRD_15_0l.15')
+        super(Reservoir, self).add(Property.newProperty('Canvas X', s.canvasx))
+        super(Reservoir, self).add(Property.newProperty('Canvas Y', s.canvasy))
+        super(Reservoir, self).add(downstream)
+        super(Reservoir, self).add(Property.newProperty('Route', 'Modified Puls'))
+        super(Reservoir, self).add(Property.newProperty('Routing Curve', 'Storage-Outflow'))
+        super(Reservoir, self).add(Property.newProperty('Initial Outflow Equals Inflow', 'Yes'))
+        super(Reservoir, self).add(storageoutflow)
 
 class Reach(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Reach, self).__init__('Reach', None)
         downstream = Property(None)
+        self.staticProperties = [downstream.name]
+        self.deserialize(currentLine, basinsrc)
+
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
+        # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
+        currentLine = infile.readline(self)
+        while not currentLine == 'End:':
+            p = Property(None)
+            lineList = currentLine.split(': ').strip()
+            p.setName(lineList[0])
+            p.setValue(lineList[1])
+            self.add(p)
+
+    def add(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(a.getValue())
+                super(Reach, self).add(self.downstream)
+            else:
+                super(Reach, self).add(a)
+
+    def remove(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(None)
+            else:
+                try:
+                    super(Reach,self).remove(a)
+                except LookupError:
+                    print("Property not found.")
 
 class Diversion(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Diversion, self).__init__('Diversion', None)
         downstream = Property(None)
         divertto = Property(None)
+        self.staticProperties = [downstream.name, divertto.name]
+        self.deserialize(currentLine, basinsrc)
+
+    def deserialize(self, currentLine, infile):
+        lineList = currentLine.split(': ').strip()
+        self.setIdentifier(lineList[1])
+        # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
+        currentLine = infile.readline(self)
+        while not currentLine == 'End:':
+            p = Property(None)
+            lineList = currentLine.split(': ').strip()
+            p.setName(lineList[0])
+            p.setValue(lineList[1])
+            self.add(p)
+
+    def add(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(a.getValue())
+                super(Diversion, self).add(self.downstream)
+            elif a.getName == divertto.name:
+                self.divertto.setValue(a.getValue())
+                super(Diversion, self).add(self.divertto)
+            else:
+                super(Diversion, self).add(a)
+
+    def remove(self, a):
+        if isinstance(a,Property):
+            if a.getName == downstream.name:
+                self.downstream.setValue(None)
+            elif a.getName == divertto.name:
+                self.divertto.setValue(None)
+            else:
+                try:
+                    super(Diversion, self).remove(a)
+                except LookupError:
+                    print("Property not found.")
 
 class Sink(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(Sink, self).__init__('Sink', None)
+        super(Sink, Element).deserialize(currentLine, basinsrc)
 
 class BasinSchema(Element):
-    def __init__(self):
+    def __init__(self, currentLine, basinsrc):
         super(BasinSchema, self).__init__('Basin Schematic Properties', None)
+        super(BasinSchema, Element).deserialize(currentLine, basinsrc)
 
 class Property:
     def __init__(self, name):
         setName(name)
         setValue(None)
+
+    @classmethod
+    def newProperty(self, name, value):
+        setName(name)
+        setValue(value)
 
     def getValue(self):
         return value
@@ -259,73 +479,52 @@ class Property:
         self.name = name
 
 
-class UpdateSubwatershed(self, basinin):
+class UpdateSubwatershed(self, basinin):    #Driver class
+    def __init__(self):
+        ws = Subwatershed()
+        readBasinFile(ws['basinin'])
+        updateBasinFile(ws['basinout'])
+        updatePdataFile(ws['pdata'])
+
     # Open *.basin source file and read it line by line. Store each basin element (i.e. Junction, Reservoir,
     # Subbasin, etc.) separately as an object of the corresponding type.
-    def startRead(self):
+    def readBasinFile(self, basinin):
         with open(basinin.selectedFile, 'r') as basinsrc:
             recordnum = 0
             try:
-                x = basinsrc.readline()
-                if(x == "End:"):
+                currentLine = basinsrc.readline()
+                if(currentLine == "End:"):
                     recordnum += 1
-                elif x.startswith('Basin:'):
-                    b = Basin()
-                    b.deserialize(basinsrc)
-                elif x.startswith('Subbasin:'):
-                    s = Subbasin(basinsrc)
-                elif x.startswith('Junction:'):
-                    j = Junction()
-                    j.deserialize(basinsrc)
-                elif x.startswith('Reservoir:'):
-                    r = Reservoir()
-                    r.deserialize(basinsrc)
-                elif x.startswith('Reach:'):
-                    r = Reach()
-                    r.deserialize(basinsrc)
-                elif x.startswith('Diversion:'):
-                    d = Diversion()
-                    d.deserialize(basinsrc)
-                elif x.startswith('Sink:'):
-                    s = Sink()
-                    s.deserialize(basinsrc)
-                elif x.startswith('Basin Schematic Properties:'):
-                    b = BasinSchema()
-                    b.deserialize(basinsrc)
+                elif currentLine.startswith('Basin:'):
+                    b = Basin(currentLine, basinsrc)
+                elif currentLine.startswith('Subbasin:'):
+                    s = Subbasin(currentLine, basinsrc)
+                elif currentLine.startswith('Junction:'):
+                    j = Junction(currentLine, basinsrc)
+                elif currentLine.startswith('Reservoir:'):
+                    r = Reservoir(currentLine, basinsrc)
+                elif currentLine.startswith('Reach:'):
+                    r = Reach(currentLine, basinsrc)
+                elif currentLine.startswith('Diversion:'):
+                    d = Diversion(currentLine, basinsrc)
+                elif currentLine.startswith('Sink:'):
+                    s = Sink(currentLine, basinsrc)
+                elif currentLine.startswith('Basin Schematic Properties:'):
+                    b = BasinSchema(currentLine, basinsrc)
             except RuntimeError:
                 print("Invalid subwatershed element. Check input *.basin file.")
                 pass
 
-    # Add junction to each subbasin in *.basin sink file - this will be the downstream element for both portions of the
-    # subbasin. Use the current downstream element for the junction.
-    def addJunction(self, x):
-        y = x.split(': ').strip()
-        pass
-
-    # Add a reservoir to each subbasin in *.basin sink file
-    def addReservoir(self, x):
-        pass
-
-    # Update portion of each subbasin corresponding to % of redevelopment, using future CN and RR, in *.basin sink file
-    def addPostdevSubbasin(self, x):
-        pass
-
-    # Add the portion of the subbasin that has not been redeveloped
-    def addPredevSubbasin(self, x):
-        pass
+    # Write info to *.basin sink file and *.pdata
+    def updateBasinFile(self, basinout):
+        with open(basinout,'w') as basinsink:
+            pass
 
     # Add Storage-Outflow entry for new subbasin to *.pdata file
-    def updatePdata(self, pdata):
-        with open(pdata.selectedFile, 'w') as pdatasink:
+    def updatePdataFile(self, pdata):
+        with open(pdata, 'w') as pdatasink:
             pass
-
-    # Write info to *.basin sink file and *.pdata
-    def updateBasin(self, basinin):
-        with open(basinout.selectedFile,'w') as basinsink:
-            pass
-
 
 
 if __name__=="__main__":
-    getFuture()
-    pullBasinElements()
+    UpdateSubwatershed()
