@@ -16,14 +16,22 @@ from operator import itemgetter
 
 class Subwatershed(dict):
 
-    _keys = ['watershed', 'subwatershed', 'basinin', 'basinout', 'pdata', 'redevelopment', 'curvenumber', 'releaserate']
+    # List of required keys for Subwatershed dict item
+    _keys = ['watershed', 'subwatershed', 'basinin', 'basinout', 'pdata', 'redevelopment', 'curvenumber', 'releaserate',
+             'elements']    # 'elements' is a list of type Element with one item for each element of Subwatershed
+
+    @classmethod
+    def getKeys(cls):
+        return cls._keys
 
     def __init__(self):
+        # Initialize this instance to None, then get properties from user
         for key in self._keys:
             self[key] = None
         self.chooseWatershed()
         self.getFilenames()
         self.getParams()
+        self.initElements()
 #        self.modBasin()
 #        self.modPdata()
 
@@ -33,7 +41,7 @@ class Subwatershed(dict):
         self['subwatershed'] = None
 
     def getFilenames(self):
-        # Get filename of *.basin file for reading - this is from the source version
+        # GUI to get filename of *.basin file for reading - this is from the source version
         basinchoice = swing.JFileChooser()  #FileFilter="basin"
         #        filter = swing.JFileChooser.FileNameExtensionFilter("*.basin files",["basin"])
         #        basinin.addChoosableFileFilter(filter)
@@ -41,26 +49,26 @@ class Subwatershed(dict):
         basinfile = basinchoice.showOpenDialog(None)
         self['basinin'] = basinchoice.selectedFile
 
-        # Get filename of *.basin file for writing - this is for the new version
+        # GUI to get filename of *.basin file for writing - this is for the new version
         basinchoice = swing.JFileChooser()
         basinfile = basinchoice.showOpenDialog(None)
         self['basinout'] = basinchoice.selectedFile
 
-        # Get filename of the *.pdata file - this is for the new version
+        # GUI to get filename of the *.pdata file - this is for the new version
         pdatachoice = swing.JFileChooser()
         pdatafile = pdata.showOpenDialog(None)
         self['pdata'] = pdatachoice.selectedFile
 
     def setParams(self, rd, cn, rr):
-        # Save the future conditions parameters
+        # Save the future conditions parameters to the current instance of Subwatershed
         self['redevelopment'] = float(rd.getText())
         self['curvenumber'] = float(cn.getText())
         self['releaserate'] = float(rr.getText())
         print(self['releaserate'])
 
     def getParams(self):
-        # Get future % of subbasin redeveloped, curve number, and release rate
-        # First set up window for UI
+        # GUI to get future % of subbasin redeveloped, curve number, and release rate
+        # Initialize window for UI
         frame = swing.JFrame("Set conditions of redeveloped portion of subbasin", layout=awt.BorderLayout())
         frame.setDefaultCloseOperation(swing.JFrame.EXIT_ON_CLOSE)
 
@@ -84,46 +92,55 @@ class Subwatershed(dict):
         frame.pack()
         frame.setVisible(True)
 
+    def initElements(self):
+        self['elements'] = []
+
 
 class Element(List):
-    def __init__(self):
-        setName(name)
+    def __init__(self, category, identifier):
+        # Initialize a generic Element with a category/name and an identifier/ID
+        setCategory(category)
         setIdentifier(identifier)
 
     def getIdentifier(self):
-        return identifier
+        return self.identifier
 
     def setIdentifier(self, identifier):
         self.identifier = identifier
 
-    def getName(self):
-        return name
+    def getCategory(self):
+        return self.category
 
-    def setName(self, name):
-        self.name = name
+    def setCategory(self, category):
+        self.category = category
 
-    def deserialize(self):  #add arg for input file
-        currentLine = file.readline(self)
+    def deserialize(self, infile):
+        # Read a single line and add the info to a new Property of an Element child class as long it is not an 'End:'
+        # line. This is intended to be used only in the child classes in super() or overridden in the child class.
+        currentLine = infile.readline(self)
         while not currentLine == 'End:':
             p = Property(None)
-            currentLine = currentLine.strip()
-            lineList = currentLine.split(': ')
+            lineList = currentLine.split(': ').strip()
             p.setName(lineList[0])
             p.setValue(lineList[1])
-            #add p to the Element object
+            super(Element, List).append(p)
 
-    def serialize(self):    #add arg for output file
-        #add code to print Element object to file and then print 'End:'
+    def serialize(self, outfile):
+        # Print Element object to file and then print 'End:'
+        outfile.write('\n')
+        for p in Subwatershed['elements']:
+            outfile.write(p[0],': ',p[1],'\n')
+        outfile.write('End:\n')
         pass
 
-    def copy(self):
-        #copy something... don't understand this yet
-        pass
+    def copy(self, category):
+        # Copy properties to a new instance of Element
+        Subwatershed['elements'].list.append(Subwatershed['elements'])
 
 
 class Basin(Element):
     def __init__(self):
-        super(Basin, self).__init__()
+        super(Basin, Element).__init__('Basin',None)
 
     def add(self):
         pass
@@ -133,18 +150,41 @@ class Basin(Element):
 
 
 class Subbasin(Element):
-    def __init__(self):
-        super(Subbasin, self).__init__()
+    def __init__(self, basinsrc):
+        super(Subbasin, Element).__init__('Subbasin',None)
         self.area = Property('Area')
         self.downstream = Property('Downstream')
         self.curvenum = Property('Curve Number')
         self.impervious = Property('Percent Impervious Area')
         self.staticProperties = [area.name, downstream.name, curvenum.name, impervious.name]
+        self.deserialize(basinsrc)
+
+    def deserialize(self, infile):
+        # Read a single line and add the info to a new Property of Subbasin as long it is not an 'End:' line
+        currentLine = infile.readline(self)
+        while not currentLine == 'End:':
+            p = Property(None)
+            lineList = currentLine.split(': ').strip()
+            p.setName(lineList[0])
+            p.setValue(lineList[1])
+            self.add(p)
 
     def add(self, a):
         if isinstance(a,Property):
-            if a.getName in staticProperties:
-                self.area = a
+            if a.getName == area.name:
+                self.area.setValue(a.getValue())
+                super(Subbasin, List).append(self.area)
+            elif a.getName == downstream.name:
+                self.downstream.setValue(a.getValue())
+                super(Subbasin, List).append(self.downstream)
+            elif a.getName == curvenum.name:
+                self.curvenum.setValue(a.getValue())
+                super(Subbasin, List).append(self.curvenum)
+            elif a.getName == impervious.name:
+                self.impervious.setValue(a.getValue())
+                super(Subbasin, List).append(self.impervious)
+            else:
+                super(Subbasin,List).append(a)
 
     def remove(self, a):
         if isinstance(a,Property):
@@ -152,6 +192,7 @@ class Subbasin(Element):
                 self.area = None
 
     def updateSubbasin(self, areaval, dsval, cnval, impval):
+        #may need to be modified once I figure out exactly how this will be used
         self.area.setValue(areaval)
         self.downstream.setValue(dsval)
         self.curvenum.setValue(cnval)
@@ -160,31 +201,33 @@ class Subbasin(Element):
 
 class Junction(Element):
     def __init__(self):
-        super(Junction, self).__init__()
+        super(Junction, self).__init__('Junction', None)
         downstream = Property(None)
 
 class Reservoir(Element):
     def __init__(self):
-        super(Reservoir, self).__init__()
+        super(Reservoir, self).__init__('Reservoir', None)
         downstream = Property(None)
         storageoutflow = Property(None)
 
 class Reach(Element):
     def __init__(self):
-        super(Reach, self).__init__()
+        super(Reach, self).__init__('Reach', None)
         downstream = Property(None)
 
 class Diversion(Element):
     def __init__(self):
-        super(Diversion, self).__init__()
+        super(Diversion, self).__init__('Diversion', None)
         downstream = Property(None)
         divertto = Property(None)
 
 class Sink(Element):
-    pass
+    def __init__(self):
+        super(Sink, self).__init__('Sink', None)
 
 class BasinSchema(Element):
-    pass
+    def __init__(self):
+        super(BasinSchema, self).__init__('Basin Schematic Properties', None)
 
 class Property:
     def __init__(self, name):
@@ -216,7 +259,6 @@ class Property:
         self.name = name
 
 
-    # Pull subbasin data from *.basin source file and store for processing
 class UpdateSubwatershed(self, basinin):
     # Open *.basin source file and read it line by line. Store each basin element (i.e. Junction, Reservoir,
     # Subbasin, etc.) separately as an object of the corresponding type.
@@ -227,28 +269,49 @@ class UpdateSubwatershed(self, basinin):
                 x = basinsrc.readline()
                 if(x == "End:"):
                     recordnum += 1
-                else:
-                    y = x.split(': ').strip()
-                    if(y=="Subbasin"):
-                        pass
-            except None:
+                elif x.startswith('Basin:'):
+                    b = Basin()
+                    b.deserialize(basinsrc)
+                elif x.startswith('Subbasin:'):
+                    s = Subbasin(basinsrc)
+                elif x.startswith('Junction:'):
+                    j = Junction()
+                    j.deserialize(basinsrc)
+                elif x.startswith('Reservoir:'):
+                    r = Reservoir()
+                    r.deserialize(basinsrc)
+                elif x.startswith('Reach:'):
+                    r = Reach()
+                    r.deserialize(basinsrc)
+                elif x.startswith('Diversion:'):
+                    d = Diversion()
+                    d.deserialize(basinsrc)
+                elif x.startswith('Sink:'):
+                    s = Sink()
+                    s.deserialize(basinsrc)
+                elif x.startswith('Basin Schematic Properties:'):
+                    b = BasinSchema()
+                    b.deserialize(basinsrc)
+            except RuntimeError:
+                print("Invalid subwatershed element. Check input *.basin file.")
                 pass
 
     # Add junction to each subbasin in *.basin sink file - this will be the downstream element for both portions of the
     # subbasin. Use the current downstream element for the junction.
-    def addJunction(self):
+    def addJunction(self, x):
+        y = x.split(': ').strip()
         pass
 
     # Add a reservoir to each subbasin in *.basin sink file
-    def addReservoir(self):
+    def addReservoir(self, x):
         pass
 
     # Update portion of each subbasin corresponding to % of redevelopment, using future CN and RR, in *.basin sink file
-    def addPostdevSubbasin(self):
+    def addPostdevSubbasin(self, x):
         pass
 
     # Add the portion of the subbasin that has not been redeveloped
-    def addPredevSubbasin(self):
+    def addPredevSubbasin(self, x):
         pass
 
     # Add Storage-Outflow entry for new subbasin to *.pdata file
