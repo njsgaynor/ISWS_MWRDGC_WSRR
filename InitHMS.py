@@ -78,6 +78,8 @@ class Subwatershed(dict):
         self['releaserate'] = rr.text #float(rr.text)
         print('setParams')
         frame.dispose()
+        self.initElements()
+        readBasinFile(self['basinin'], self['basinout'])
 
     def getParams(self):
         # GUI to get future % of subbasin redeveloped, curve number, and release rate
@@ -89,19 +91,23 @@ class Subwatershed(dict):
         futureparams = swing.JPanel(layout=awt.GridLayout(3,2))
         inbutton = swing.JPanel()
         futureparams.add(swing.JLabel('Percent Redevelopment '))
-        rd = futureparams.add(swing.JTextField('', 5))
+        rd = swing.JTextField('', 5)
+        futureparams.add(rd)
         futureparams.add(swing.JLabel('Future Curve Number '))
-        cn = futureparams.add(swing.JTextField('', 5))
+        cn = swing.JTextField('', 5)
+        futureparams.add(cn)
         futureparams.add(swing.JLabel('Release Rate '))
-        rr = futureparams.add(swing.JTextField('', 5))
+        rr = swing.JTextField('', 5)
+        futureparams.add(rr)
 
         # Create panel for button that stores the values entered
-        setButton = swing.JButton('Set parameters', actionPerformed=(lambda x: self.setParams(rd, cn, rr, frame)))
+        setButton = swing.JButton('Set parameters')
 
         # Add panels to the window and make the window visible
         frame.add(futureparams, awt.BorderLayout.NORTH)
         inbutton.add(setButton)
         frame.add(inbutton, awt.BorderLayout.SOUTH)
+        setButton.addMouseListener(awt.event.MouseListener.mouseClicked(self, self.setParams(rd, cn, rr, frame)))
         frame.pack()
         frame.setVisible(True)
 
@@ -554,6 +560,6 @@ def writeBasinFile(**ws):
 
 if __name__=="__main__":
     ws = Subwatershed()
-    readBasinFile(ws['basinin'], ws['basinout'])
+#    readBasinFile(ws['basinin'], ws['basinout'])
 #    writeBasinFile(ws)
 #    updatePdataFile(ws['pdata'])
