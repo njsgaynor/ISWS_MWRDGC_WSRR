@@ -15,6 +15,8 @@ import java.awt as awt
 import datetime
 import calendar
 import copy
+import io
+import shutil
 from operator import itemgetter
 
 class Subwatershed(dict):
@@ -205,10 +207,10 @@ class Subbasin(Element):
                                  self.canvasx.name, self.canvasy.name, self.canopy.name]
 
     @classmethod
-    def readSubbasin(cls, currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate):
+    def readSubbasin(cls, currentLine, basinsrc, basinsink, pdatasink, redevel, curvenum, rlsrate):
         s = Subbasin()
         super(Subbasin, s).deserialize(currentLine, basinsrc)
-        s.divideSubbasin(basinsink, redevel, curvenum, rlsrate)
+        s.divideSubbasin(basinsink, pdatasink, dssfile, redevel, curvenum, rlsrate)
         s.serialize(basinsink)
         return s
 
@@ -260,10 +262,10 @@ class Subbasin(Element):
                 except LookupError:
                     print("Property not found.")
 
-    def divideSubbasin(self, basinsink, redevel, curvenum, rlsrate):
+    def divideSubbasin(self, basinsink, pdatasink, dssfile, redevel, curvenum, rlsrate):
         #may need to be modified once I figure out exactly how this will be used
         j = Junction.newJunction(self, basinsink)
-        r = Reservoir.newReservoir(self, basinsink)
+        r = Reservoir.newReservoir(self, basinsink, pdatasink, dssfile)
         sNew = Subbasin.newSubbasin(self, basinsink, redevel, curvenum)
         self.area.setValue(self.area.getAsFloat() - sNew.area.getAsFloat())
         self.downstream.setValue('J ' + self.getIdentifier())
@@ -369,7 +371,7 @@ class Reservoir(Element):
                     print("Property not found.")
 
     @classmethod
-    def newReservoir(cls, s, basinsink):
+    def newReservoir(cls, s, basinsink, pdatasink, dssfile):
         r = Reservoir()
         r.setIdentifier('Reservoir ' + s.getIdentifier())
         r.downstream = Property.newProperty('Downstream', 'J ' + s.getIdentifier())
@@ -382,7 +384,7 @@ class Reservoir(Element):
         super(Reservoir, r).add(Property.newProperty('Initial Outflow Equals Inflow', 'Yes'))
         super(Reservoir, r).add(r.storageoutflow)
         r.serialize(basinsink)
-#        newPdata(self, ws)
+        newPdata(r, pdatasink, dssfile)
         return r
 
 
@@ -487,21 +489,23 @@ class Pdata(Element):
         self.pathname = Property(None)
         self.staticProperties = [dssfile.name, pathname.name]
 
-    def newPdata(self, r, ws):
+    def newPdata(self, r, pdatasink, dssfile):
         self.__init__()
         # Add a new storage-outflow table to pdata
         nowDT = datetime.today()
         nowDate = str(nowDT.day) + ' ' + calendar.month_name[nowDT.month] + ' ' + str(nowDT.year)
         nowTime = nowDT.hour + ':' + nowDT.minute + ':' + nowDT.second
         self.setIdentifier(r.storageoutflow.getAsString())
-        Property.newProperty('Table Type', 'Storage-Outflow')
-        Property.newProperty('Last Modified Date', str(nowDate))
-        Property.newProperty('Last Modified Time', str(nowTime))
-        Property.newProperty('X-Units', 'ACRE-FT')
-        Property.newProperty('Y-Units', 'CFS')
-        Property.newProperty('User External DSS File', 'NO')
-        Property.newProperty('DSS File', ws['dssfile'])
-        Property.newProperty('Pathname', '//' + self.getIdentifier() + '/STORAGE-FLOW///TABLE/')
+        super(Pdata, self).add(Property.newProperty('Table Type', 'Storage-Outflow'))
+        super(Pdata, self).add(Property.newProperty('Last Modified Date', str(nowDate)))
+        super(Pdata, self).add(Property.newProperty('Last Modified Time', str(nowTime)))
+        super(Pdata, self).add(Property.newProperty('X-Units', 'ACRE-FT'))
+        super(Pdata, self).add(Property.newProperty('Y-Units', 'CFS'))
+        super(Pdata, self).add(Property.newProperty('User External DSS File', 'NO'))
+        super(Pdata, self).add(Property.newProperty('DSS File', dssfile))
+        super(Pdata, self).add(Property.newProperty('Pathname', '//' + self.getIdentifier() + '/STORAGE-FLOW///TABLE/'))
+        self.serialize(pdatasink)
+        return self
 
 
 class Property:
@@ -549,13 +553,15 @@ class UpdateSubwatershed():    #Driver class
     pass
 
 
-def updatePdataFile(ws):
-    with open(pdata, 'w') as pdatasink:
-        ws['pdatafile'].serialize(pdatasink)
+def updatePdataFile(pd, pdatasink):
+    pd.serialize(pdatasink)
 
 
-def readBasinFile(basinin, basinout, redevel, curvenum, rlsrate):
-    with open(basinin, 'rb') as basinsrc, open(basinout, 'wb') as basinsink:
+def readBasinFile(basinin, basinout, pdatafile, dssfile, redevel, curvenum, rlsrate):
+    pdatabackup = pdatafile + ".back"
+    with open(basinin, 'rb') as basinsrc, open(basinout, 'wb') as basinsink, open(pdatafile, 'ab') as pdatasink, \
+            open(pdatabackup, 'wb') as pdatacopy:
+        shutil.copyfileobj(pdatasink, pdatabackup)
         recordnum = 0
         currentLine = ' '
         while not currentLine == '':
@@ -567,7 +573,8 @@ def readBasinFile(basinin, basinout, redevel, curvenum, rlsrate):
                 elif currentLine.startswith('Basin:'):
                     b = Basin.readBasin(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Subbasin:'):
-                    b = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate)
+                    b = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, pdatasink, dssfile, redevel, curvenum,
+                                              rlsrate)
                 elif currentLine.startswith('Junction:'):
                     b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
@@ -602,7 +609,8 @@ def writeBasinFile(**ws):
 
 if __name__=="__main__":
     ws = Subwatershed()
-    readBasinFile(ws['basinin'], ws['basinout'], ws['redevelopment'], ws['curvenumber'], ws['releaserate'])
+    readBasinFile(ws['basinin'], ws['basinout'], ws['pdatafile'], ws['dssfile'], ws['redevelopment'], ws['curvenumber'],
+                  ws['releaserate'])
     print('Program finished successfully.')
 #    writeBasinFile(ws)
 #    updatePdataFile(ws['pdata'])
