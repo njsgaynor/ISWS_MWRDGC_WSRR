@@ -113,7 +113,6 @@ class Subwatershed(dict):
 
     def initElements(self):
         self['elements'] = []
-        print('init elements')
 
 
 class Element(list):
@@ -144,7 +143,7 @@ class Element(list):
         # Read a single line and add the info to a new Property of an Element child class as long it is not an 'End:'
         # line. This is intended to be used only in the child classes in super() or overridden in the child class.
         currentLine = infile.readline()
-        while not currentLine == 'End:\n':
+        while not currentLine.startswith('End:'):
             if not currentLine == '\n':
                 p = Property(None)
                 lineList = currentLine.strip('\n').strip().split(': ')
@@ -152,7 +151,6 @@ class Element(list):
                 try:
                     p.setValue(lineList[1])
                 except IndexError:
-                    print(lineList)
                     p.setValue('')
                 self.__class__.add(self, p)
                 currentLine = infile.readline()
@@ -163,11 +161,11 @@ class Element(list):
         # Print Element object to file and then print 'End:'
         outfile.write(self.getCategory() + ': ' + self.getIdentifier() + '\n')
         for line in self:
-            outfile.write('    ' + line.getName() + ': ' + line.getAsString() + '\n')
-        outfile.write('End:\n')
-        outfile.write('\n')
-        pass
-
+            if(line.getName() == ''):
+                outfile.write('\n')
+            else:
+                outfile.write('    ' + line.getName() + ': ' + line.getAsString() + '\n')
+        outfile.write('End:\n\n')
 
     def add(self, a):
         # Adds a Property object to current instance of Element
@@ -186,9 +184,10 @@ class Basin(Element):
         super(Basin, self).__init__('Basin', None)
 
     @classmethod
-    def readBasin(cls, currentLine, basinsrc):
+    def readBasin(cls, currentLine, basinsrc, basinsink):
         b = Basin()
         super(Basin, b).deserialize(currentLine, basinsrc)
+        b.serialize(basinsink)
         return b
 
 
@@ -206,10 +205,11 @@ class Subbasin(Element):
                                  self.canvasx.name, self.canvasy.name, self.canopy.name]
 
     @classmethod
-    def readSubbasin(cls, currentLine, basinsrc, redevel, curvenum, rlsrate):
+    def readSubbasin(cls, currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate):
         s = Subbasin()
         super(Subbasin, s).deserialize(currentLine, basinsrc)
-        s.divideSubbasin(redevel, curvenum, rlsrate)
+        s.divideSubbasin(basinsink, redevel, curvenum, rlsrate)
+        s.serialize(basinsink)
         return s
 
     def add(self, a):
@@ -260,20 +260,20 @@ class Subbasin(Element):
                 except LookupError:
                     print("Property not found.")
 
-    def divideSubbasin(self, redevel, curvenum, rlsrate):
+    def divideSubbasin(self, basinsink, redevel, curvenum, rlsrate):
         #may need to be modified once I figure out exactly how this will be used
-        j = Junction.newJunction(self)
-        r = Reservoir.newReservoir(self)
-        sNew = Subbasin.newSubbasin(self, redevel, curvenum)
+        j = Junction.newJunction(self, basinsink)
+        r = Reservoir.newReservoir(self, basinsink)
+        sNew = Subbasin.newSubbasin(self, basinsink, redevel, curvenum)
         self.area.setValue(self.area.getAsFloat() - sNew.area.getAsFloat())
-        self.downstream.setValue('J ' + self.downstream.getName())
+        self.downstream.setValue('J ' + self.getIdentifier())
 
     @classmethod
-    def newSubbasin(cls, s, redevel, curvenum):
+    def newSubbasin(cls, s, basinsink, redevel, curvenum):
         sNew = copy.deepcopy(s)
         sNew.setIdentifier(s.getIdentifier() + 'MWRD')
-        sNew.area.setValue(redevel * s.area.getAsFloat())
-        sNew.downstream.setValue('Reservoir ' + s.downstream.getAsString())
+        sNew.area.setValue((redevel / 100.) * s.area.getAsFloat())
+        sNew.downstream.setValue('Reservoir ' + s.getIdentifier())
         sNew.canopy.setValue('SMA')
         # Define new canopy properties
         initCanopy = Property.newProperty('Initial Canopy Storage Percent', 0)
@@ -283,6 +283,7 @@ class Subbasin(Element):
         super(Subbasin, sNew).insert(super(Subbasin, sNew).index(sNew.canopy) + 1, maxCanopy)
         super(Subbasin, sNew).insert(super(Subbasin, sNew).index(sNew.canopy) + 1, initCanopy)
         sNew.curvenum.setValue(curvenum)
+        sNew.serialize(basinsink)
         return sNew
 
 
@@ -293,9 +294,10 @@ class Junction(Element):
         self.staticProperties = [self.downstream.name]
 
     @classmethod
-    def readJunction(cls, currentLine, basinsrc):
+    def readJunction(cls, currentLine, basinsrc, basinsink):
         j = Junction()
         super(Junction, j).deserialize(currentLine, basinsrc)
+        j.serialize(basinsink)
         return j
 
     def add(self, a):
@@ -317,7 +319,7 @@ class Junction(Element):
                     print("Property not found.")
 
     @classmethod
-    def newJunction(cls, s):
+    def newJunction(cls, s, basinsink):
         j = Junction()
         j.setIdentifier('J ' + str(s.getIdentifier()))
         j.downstream = s.downstream
@@ -325,6 +327,7 @@ class Junction(Element):
         super(Junction, j).add(Property.newProperty('Canvas X', s.canvasx.getValue()))
         super(Junction, j).add(Property.newProperty('Canvas Y', s.canvasy.getValue()))
         super(Junction, j).add(j.downstream)
+        j.serialize(basinsink)
         return j
 
 
@@ -336,9 +339,10 @@ class Reservoir(Element):
         self.staticProperties = [self.downstream.name, self.storageoutflow.name]
 
     @classmethod
-    def readReservoir(cls, currentLine, basinsrc):
+    def readReservoir(cls, currentLine, basinsrc, basinsink):
         r = Reservoir()
         super(Reservoir, j).deserialize(currentLine, basinsrc)
+        r.serialize(basinsink)
         return r
 
     def add(self, a):
@@ -365,11 +369,11 @@ class Reservoir(Element):
                     print("Property not found.")
 
     @classmethod
-    def newReservoir(cls, s):
+    def newReservoir(cls, s, basinsink):
         r = Reservoir()
         r.setIdentifier('Reservoir ' + s.getIdentifier())
-        r.downstream = Property.newProperty('Downstream', 'J ' + s.downstream.getAsString())
-        storageoutflow = Property.newProperty('Storage-Outflow Table', s.getIdentifier() + 'MWRD_15_0l.15')
+        r.downstream = Property.newProperty('Downstream', 'J ' + s.getIdentifier())
+        r.storageoutflow = Property.newProperty('Storage-Outflow Table', s.getIdentifier() + 'MWRD_15_0l.15')
         super(Reservoir, r).add(Property.newProperty('Canvas X', s.canvasx.getValue()))
         super(Reservoir, r).add(Property.newProperty('Canvas Y', s.canvasy.getValue()))
         super(Reservoir, r).add(r.downstream)
@@ -377,6 +381,7 @@ class Reservoir(Element):
         super(Reservoir, r).add(Property.newProperty('Routing Curve', 'Storage-Outflow'))
         super(Reservoir, r).add(Property.newProperty('Initial Outflow Equals Inflow', 'Yes'))
         super(Reservoir, r).add(r.storageoutflow)
+        r.serialize(basinsink)
 #        newPdata(self, ws)
         return r
 
@@ -388,9 +393,10 @@ class Reach(Element):
         self.staticProperties = [self.downstream.name]
 
     @classmethod
-    def readReach(cls, currentLine, basinsrc):
+    def readReach(cls, currentLine, basinsrc, basinsink):
         r = Reach()
         super(Reach, r).deserialize(currentLine, basinsrc)
+        r.serialize(basinsink)
         return r
 
     def add(self, a):
@@ -420,9 +426,10 @@ class Diversion(Element):
         self.staticProperties = [self.downstream.name, self.divertto.name]
 
     @classmethod
-    def readDiversion(cls, currentLine, basinsrc):
+    def readDiversion(cls, currentLine, basinsrc, basinsink):
         d = Diversion()
         super(Diversion, d).deserialize(currentLine, basinsrc)
+        d.serialize(basinsink)
         return d
 
     def add(self, a):
@@ -454,9 +461,10 @@ class Sink(Element):
         super(Sink, self).__init__('Sink', None)
 
     @classmethod
-    def readSink(cls, currentLine, basinsrc):
+    def readSink(cls, currentLine, basinsrc, basinsink):
         s = Sink()
         super(Sink, s).deserialize(currentLine, basinsrc)
+        s.serialize(basinsink)
         return s
 
 
@@ -465,9 +473,10 @@ class BasinSchema(Element):
         super(BasinSchema, self).__init__('Basin Schematic Properties', None)
 
     @classmethod
-    def readBasinSchema(cls, currentLine, basinsrc):
+    def readBasinSchema(cls, currentLine, basinsrc, basinsink):
         b = BasinSchema()
         super(BasinSchema, b).deserialize(currentLine, basinsrc)
+        b.serialize(basinsink)
         return b
 
 
@@ -546,33 +555,33 @@ def updatePdataFile(ws):
 
 
 def readBasinFile(basinin, basinout, redevel, curvenum, rlsrate):
-    with open(basinin, 'r') as basinsrc, open(basinout, 'wb') as basinsink:
+    with open(basinin, 'rb') as basinsrc, open(basinout, 'wb') as basinsink:
         recordnum = 0
         currentLine = ' '
         while not currentLine == '':
             try:
                 currentLine = basinsrc.readline()
-                if(currentLine == "End:"):
+                if(currentLine.startswith('End:')):
                     b.serialize(basinsink)
                     recordnum += 1
-                elif currentLine == '\n':
-                    pass
                 elif currentLine.startswith('Basin:'):
-                    b = Basin.readBasin(currentLine, basinsrc)
+                    b = Basin.readBasin(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Subbasin:'):
-                    b = Subbasin.readSubbasin(currentLine, basinsrc, redevel, curvenum, rlsrate)
+                    b = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate)
                 elif currentLine.startswith('Junction:'):
-                    b = Junction.readJunction(currentLine, basinsrc)
+                    b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
-                    b = Reservoir.readReservoir(currentLine, basinsrc)
+                    b = Reservoir.readReservoir(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reach:'):
-                    b = Reach.readReach(currentLine, basinsrc)
+                    b = Reach.readReach(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Diversion:'):
-                    b = Diversion.readDiversion(currentLine, basinsrc)
+                    b = Diversion.readDiversion(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Sink:'):
-                    b = Sink.readSink(currentLine, basinsrc)
+                    b = Sink.readSink(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Basin Schematic Properties:'):
-                    b = BasinSchema.readBasinSchema(currentLine, basinsrc)
+                    b = BasinSchema.readBasinSchema(currentLine, basinsrc, basinsink)
+                elif currentLine.endswith('\n'):
+                    pass
                 elif currentLine == '':
                     print("End of file " + basinin + ".")
                     return
