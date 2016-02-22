@@ -1,0 +1,386 @@
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set program class file 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set PROG=hms.Hms 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set jar path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=. 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\ 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set Python path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set PY_OPTS=-Dpython.path=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set java.library.path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JAVA_LIB_PATH=. 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JAVA_LIB_OPT="-Djava.library.path=." 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM Set program arguments 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [-s] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= -s 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>shift
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>goto loop 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>shift
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>goto loop 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>java\bin\java -Dsun.java2d.d3d=false -DMapPanel.NoVolatileImage=true -Xms32M -Xmx512M -Dpython.path=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar "-Djava.library.path=." -classpath .;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar hms.Hms  -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py 
+Begin HEC-HMS 3.5 10Aug2010
+NOTE 14650:  Run Script: "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py"
+NOTE 10008:  Finished opening project "LUDT_Design" in directory "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/HEC-HMSModels/LucasDitch/LUDT_DesignRuns" at time 17Feb2016, 12:43:49.
+NOTE 10181:  Opened control specifications "Control 1" at time 17Feb2016, 12:43:49.
+NOTE 10179:  Opened basin model "LUDT_Design" at time 17Feb2016, 12:43:49.
+Debug off; no logging properties file: config/properties/logger.properties
+NOTE 10180:  Opened meteorologic model "HuffQII_100yr12hr" at time 17Feb2016, 12:43:50.
+NOTE 10184:  Began computing simulation run "100YR12HRHUFFARF" at time 17Feb2016, 12:43:50.
+NOTE 20364:  Found no parameter problems in meteorologic model "HuffQII_100yr12hr".
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146590" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146540" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146520" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146480" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146470" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146380" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146580" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146630" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146370" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146260" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146830" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146880" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146790" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146690" contains 432 missing precipitation values that were set to zero.
+NOTE 40040:  The basin model contains 2 outlets: Sink-1, LUDT_RobertsRoad_to_STCR
+NOTE 40049:  Found no parameter problems in basin model "LUDT_Design".
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146480"; reduce simulation time interval.
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146880"; reduce simulation time interval.
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146690"; reduce simulation time interval.
+WARNING 40754:  Total inflow to reach "R146900" is zero.
+NOTE 40755:  Kinematic wave volume check for reach "R146900".
+     Inflow (cu m): 0  Initial storage (cu m): 0
+     Outflow (cu m): 0  Final storage (cu m): 0
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146060".
+     Inflow (cu m): 1,066,446.2784  Initial storage (cu m): 0
+     Outflow (cu m): 1,066,159.7627  Final storage (cu m): 0
+     Percent error: 0.03
+NOTE 40755:  Kinematic wave volume check for reach "R146070".
+     Inflow (cu m): 2,474,555.2448  Initial storage (cu m): 0
+     Outflow (cu m): 2,473,922.7518  Final storage (cu m): 0.0002
+     Percent error: 0.03
+NOTE 40755:  Kinematic wave volume check for reach "R146100".
+     Inflow (cu m): 1,255,903.6069  Initial storage (cu m): 0
+     Outflow (cu m): 1,255,397.6805  Final storage (cu m): 0
+     Percent error: 0.04
+NOTE 40755:  Kinematic wave volume check for reach "R146750".
+     Inflow (cu m): 3,729,320.4397  Initial storage (cu m): 0
+     Outflow (cu m): 3,729,305.5081  Final storage (cu m): 0.0002
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146080".
+     Inflow (cu m): 5,192,652.8582  Initial storage (cu m): 0
+     Outflow (cu m): 5,192,302.7321  Final storage (cu m): 0.0008
+     Percent error: 0.01
+NOTE 40755:  Kinematic wave volume check for reach "R146860".
+     Inflow (cu m): 1,293,675.8755  Initial storage (cu m): 0
+     Outflow (cu m): 1,289,659.1267  Final storage (cu m): 0.0035
+     Percent error: 0.31
+NOTE 40755:  Kinematic wave volume check for reach "R146660".
+     Inflow (cu m): 2,719,654.6031  Initial storage (cu m): 0
+     Outflow (cu m): 2,718,577.3529  Final storage (cu m): 0.0783
+     Percent error: 0.04
+NOTE 40755:  Kinematic wave volume check for reach "R146110".
+     Inflow (cu m): 3,733,249.606  Initial storage (cu m): 0
+     Outflow (cu m): 3,733,131.543  Final storage (cu m): 0.0834
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146400".
+     Inflow (cu m): 5,327,918.9571  Initial storage (cu m): 0
+     Outflow (cu m): 5,319,435.6757  Final storage (cu m): 1.9258
+     Percent error: 0.16
+NOTE 40755:  Kinematic wave volume check for reach "R146140".
+     Inflow (cu m): 7,226,822.3146  Initial storage (cu m): 0
+     Outflow (cu m): 7,226,713.5512  Final storage (cu m): 0.3347
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R143360".
+     Inflow (cu m): 852,138.0185  Initial storage (cu m): 0
+     Outflow (cu m): 850,372.1331  Final storage (cu m): 0.0203
+     Percent error: 0.21
+NOTE 40755:  Kinematic wave volume check for reach "R146150".
+     Inflow (cu m): 9,816,789.1364  Initial storage (cu m): 0
+     Outflow (cu m): 9,815,406.5532  Final storage (cu m): 2.0977
+     Percent error: 0.01
+NOTE 40755:  Kinematic wave volume check for reach "R146160".
+     Inflow (cu m): 1,327,604.5251  Initial storage (cu m): 0
+     Outflow (cu m): 1,324,605.8444  Final storage (cu m): 0.576
+     Percent error: 0.23
+NOTE 40755:  Kinematic wave volume check for reach "R146180".
+     Inflow (cu m): 11,140,287.3706  Initial storage (cu m): 0
+     Outflow (cu m): 11,140,235.9  Final storage (cu m): 1.4216
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R_RobertsRoadSewer".
+     Inflow (cu m): 4,752,499.4365  Initial storage (cu m): 0
+     Outflow (cu m): 4,750,252.8325  Final storage (cu m): 0.0053
+     Percent error: 0.05
+NOTE 10185:  Finished computing simulation run "100YR12HRHUFFARF" at time 17Feb2016, 12:43:50.
+NOTE 12573:  End script "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py"; Exit code 0
+End HEC-HMS 3.5 10Aug2010; Exit status = 0
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-DSSVue>java\bin\java -ms64M -mx1000M -Dpython.path=jar\sys\jythonLib.jar\lib;jar\sys\jythonUtils.jar;".." -Dpython.home="C:\Users\nschiff2\AppData\Local\Temp" -DPLUGINS=Plugins -Djava.library.path=lib -Dproperties.path=config\properties -Djava.security.policy=config\java.policy -Dsun.java2d.noddraw -Dsun.java2d.d3d=false -Dlogfile.directory="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\logs" -DLOGFILE="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\logs\HEC-DSSVue.log" -DCACHE_DIR="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\pythonCache" -Dscripts.directory="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\scripts" -DCWMS_HOME="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue" -Dv2  -cp Plugins\ChartPlugin.jar;Plugins\DssutlImportExport.jar;Plugins\ExcelDssVuePlugin.jar;Plugins\NCDC.jar;Plugins\RiverGages.jar;Plugins\TimeSeriesWiz.jar;Plugins\USGS.jar;Plugins\WaterML.jar;Plugins\ChartPlugin.jar;jar\help\dssvueHelp.jar;jar\hec.jar;jar\gridUtil.jar;jar\hecdata.jar;jar\rma.jar;jar\images.jar;jar\heclib.jar;jar\sys\jdom.jar;jar\sys\jh.jar;jar\sys\jfreechart.jar;jar\sys\jcommon.jar;jar\sys\jai_core.jar;jar\sys\jai_imageio.jar;jar\sys\jai_codec.jar;jar\sys\jxl.jar;jar\sys\jythonUtils.jar;jar\sys\jythonlib.jar;jar\sys\jython.jar;jar\sys\codebase.jar; hec.dssgui.HecDssVue -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/createStorageOutflowCurves.py 
+Version stamp is 2.0.0.17G date 2010.02.09.04.41 
+::::::::
+::
+:: Initializing Jython interpreter environment.
+:: Application home variable = CWMS_HOME
+:: CWMS_HOME = C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue
+:: Jython script path = jar\sys\jythonLib.jar\lib;jar\sys\jythonUtils.jar;..
+::
+::::::::
+Failed to get environment, environ will be empty: (0, 'Failed to execute command ([\'sh\', \'-c\', \'env\']): java.io.IOException: Cannot run program "sh": CreateProcess error=2, The system cannot find the file specified')
+Debug off; no logging properties file: C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue/config/properties/logger.properties
+    -----DSS---ZOPEN:  Existing File Opened,  File: C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/HEC-HMSModels/LucasDitch/LUDT_DesignRuns/LUDT_Design.dss
+                       Unit:   71;  DSS Versions - Software: 6-QF, File: 6-ND
+ -----DSS--- ZREAD Unit   71; Vers.  108:  //W146370/FLOW-UNIT GRAPH/TS-PATTERN/5MIN/RUN:100YR12HRHUFFARF/
+ -----DSS--- ZREAD Unit   71; Vers.  232:  //TABLE 1/STORAGE-FLOW///TABLE/
+ -----DSS---ZWRITE Unit  71; Vers.  233:  //TABLE 1/STORAGE-FLOW///TABLE/
+ -----DSS--- ZREAD Unit   71; Vers.  108:  //W146380/FLOW-UNIT GRAPH/TS-PATTERN/5MIN/RUN:100YR12HRHUFFARF/
+ -----DSS--- ZREAD Unit   71; Vers.  233:  //TABLE 1/STORAGE-FLOW///TABLE/
+ -----DSS---ZWRITE Unit  71; Vers.  234:  //TABLE 1/STORAGE-FLOW///TABLE/
+ -----DSS--- ZREAD Unit   71; Vers.  108:  //W146260/FLOW-UNIT GRAPH/TS-PATTERN/5MIN/RUN:100YR12HRHUFFARF/
+ -----DSS--- ZREAD Unit   71; Vers.  234:  //TABLE 1/STORAGE-FLOW///TABLE/
+ -----DSS---ZWRITE Unit  71; Vers.  235:  //TABLE 1/STORAGE-FLOW///TABLE/
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-DSSVue>endlocal
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set program class file 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set PROG=hms.Hms 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set jar path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=. 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\ 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JARS=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set Python path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set PY_OPTS=-Dpython.path=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM set java.library.path 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JAVA_LIB_PATH=. 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set JAVA_LIB_OPT="-Djava.library.path=." 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>REM Set program arguments 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [-s] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= -s 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>shift
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>goto loop 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>set ARGS= -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>shift
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>goto loop 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>if [] == [] goto end 
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-HMS>java\bin\java -Dsun.java2d.d3d=false -DMapPanel.NoVolatileImage=true -Xms32M -Xmx512M -Dpython.path=.;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar "-Djava.library.path=." -classpath .;..\;.\hms.jar;.\ui;.\lib\commons-math.jar;.\lib\jython.jar;.\lib\jdom.jar;.\lib\serializer.jar;.\lib\xalan.jar;.\lib\xercesImpl.jar;.\lib\xml-apis.jar;.\lib\Environment.jar;.\lib\MrSidReader.jar;.\lib\images.jar;.\lib\jh.jar hms.Hms  -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py 
+Begin HEC-HMS 3.5 10Aug2010
+NOTE 14650:  Run Script: "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py"
+NOTE 10008:  Finished opening project "LUDT_Design" in directory "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/HEC-HMSModels/LucasDitch/LUDT_DesignRuns" at time 17Feb2016, 12:43:52.
+NOTE 10181:  Opened control specifications "Control 1" at time 17Feb2016, 12:43:52.
+NOTE 10179:  Opened basin model "LUDT_Design" at time 17Feb2016, 12:43:52.
+Debug off; no logging properties file: config/properties/logger.properties
+NOTE 10180:  Opened meteorologic model "HuffQII_100yr12hr" at time 17Feb2016, 12:43:52.
+NOTE 10184:  Began computing simulation run "100YR12HRHUFFARF" at time 17Feb2016, 12:43:52.
+NOTE 20364:  Found no parameter problems in meteorologic model "HuffQII_100yr12hr".
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146590" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146540" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146520" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146480" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146470" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146380" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146580" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146630" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146370" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146260" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146830" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146880" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146790" contains 432 missing precipitation values that were set to zero.
+WARNING 20657:  Hyetograph gage "100YR12HRHUFFARF" for subbasin "W146690" contains 432 missing precipitation values that were set to zero.
+NOTE 40040:  The basin model contains 2 outlets: Sink-1, LUDT_RobertsRoad_to_STCR
+NOTE 40049:  Found no parameter problems in basin model "LUDT_Design".
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146480"; reduce simulation time interval.
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146880"; reduce simulation time interval.
+WARNING 41784:  Simulation time interval is greater than 0.29 * lag for subbasin "W146690"; reduce simulation time interval.
+WARNING 40754:  Total inflow to reach "R146900" is zero.
+NOTE 40755:  Kinematic wave volume check for reach "R146900".
+     Inflow (cu m): 0  Initial storage (cu m): 0
+     Outflow (cu m): 0  Final storage (cu m): 0
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146060".
+     Inflow (cu m): 1,066,446.2784  Initial storage (cu m): 0
+     Outflow (cu m): 1,066,159.7627  Final storage (cu m): 0
+     Percent error: 0.03
+NOTE 40755:  Kinematic wave volume check for reach "R146070".
+     Inflow (cu m): 2,474,555.2448  Initial storage (cu m): 0
+     Outflow (cu m): 2,473,922.7518  Final storage (cu m): 0.0002
+     Percent error: 0.03
+NOTE 40755:  Kinematic wave volume check for reach "R146100".
+     Inflow (cu m): 1,255,903.6069  Initial storage (cu m): 0
+     Outflow (cu m): 1,255,397.6805  Final storage (cu m): 0
+     Percent error: 0.04
+NOTE 40755:  Kinematic wave volume check for reach "R146750".
+     Inflow (cu m): 3,729,320.4397  Initial storage (cu m): 0
+     Outflow (cu m): 3,729,305.5081  Final storage (cu m): 0.0002
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146080".
+     Inflow (cu m): 5,192,652.8582  Initial storage (cu m): 0
+     Outflow (cu m): 5,192,302.7321  Final storage (cu m): 0.0008
+     Percent error: 0.01
+NOTE 40755:  Kinematic wave volume check for reach "R146860".
+     Inflow (cu m): 1,293,675.8755  Initial storage (cu m): 0
+     Outflow (cu m): 1,289,659.1267  Final storage (cu m): 0.0035
+     Percent error: 0.31
+NOTE 40755:  Kinematic wave volume check for reach "R146660".
+     Inflow (cu m): 2,719,654.6031  Initial storage (cu m): 0
+     Outflow (cu m): 2,718,577.3529  Final storage (cu m): 0.0783
+     Percent error: 0.04
+NOTE 40755:  Kinematic wave volume check for reach "R146110".
+     Inflow (cu m): 3,733,249.606  Initial storage (cu m): 0
+     Outflow (cu m): 3,733,131.543  Final storage (cu m): 0.0834
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R146400".
+     Inflow (cu m): 5,327,918.9571  Initial storage (cu m): 0
+     Outflow (cu m): 5,319,435.6757  Final storage (cu m): 1.9258
+     Percent error: 0.16
+NOTE 40755:  Kinematic wave volume check for reach "R146140".
+     Inflow (cu m): 7,226,822.3146  Initial storage (cu m): 0
+     Outflow (cu m): 7,226,713.5512  Final storage (cu m): 0.3347
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R143360".
+     Inflow (cu m): 852,138.0185  Initial storage (cu m): 0
+     Outflow (cu m): 850,372.1331  Final storage (cu m): 0.0203
+     Percent error: 0.21
+NOTE 40755:  Kinematic wave volume check for reach "R146150".
+     Inflow (cu m): 9,816,789.1364  Initial storage (cu m): 0
+     Outflow (cu m): 9,815,406.5532  Final storage (cu m): 2.0977
+     Percent error: 0.01
+NOTE 40755:  Kinematic wave volume check for reach "R146160".
+     Inflow (cu m): 1,327,604.5251  Initial storage (cu m): 0
+     Outflow (cu m): 1,324,605.8444  Final storage (cu m): 0.576
+     Percent error: 0.23
+NOTE 40755:  Kinematic wave volume check for reach "R146180".
+     Inflow (cu m): 11,140,287.3706  Initial storage (cu m): 0
+     Outflow (cu m): 11,140,235.9  Final storage (cu m): 1.4216
+     Percent error: 0
+NOTE 40755:  Kinematic wave volume check for reach "R_RobertsRoadSewer".
+     Inflow (cu m): 4,752,499.4365  Initial storage (cu m): 0
+     Outflow (cu m): 4,750,252.8325  Final storage (cu m): 0.0053
+     Percent error: 0.05
+NOTE 10185:  Finished computing simulation run "100YR12HRHUFFARF" at time 17Feb2016, 12:43:53.
+NOTE 12573:  End script "C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/RunHecHmsModel.py"; Exit code 0
+End HEC-HMS 3.5 10Aug2010; Exit status = 0
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-DSSVue>java\bin\java -ms64M -mx1000M -Dpython.path=jar\sys\jythonLib.jar\lib;jar\sys\jythonUtils.jar;".." -Dpython.home="C:\Users\nschiff2\AppData\Local\Temp" -DPLUGINS=Plugins -Djava.library.path=lib -Dproperties.path=config\properties -Djava.security.policy=config\java.policy -Dsun.java2d.noddraw -Dsun.java2d.d3d=false -Dlogfile.directory="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\logs" -DLOGFILE="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\logs\HEC-DSSVue.log" -DCACHE_DIR="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\pythonCache" -Dscripts.directory="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue\scripts" -DCWMS_HOME="C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue" -Dv2  -cp Plugins\ChartPlugin.jar;Plugins\DssutlImportExport.jar;Plugins\ExcelDssVuePlugin.jar;Plugins\NCDC.jar;Plugins\RiverGages.jar;Plugins\TimeSeriesWiz.jar;Plugins\USGS.jar;Plugins\WaterML.jar;Plugins\ChartPlugin.jar;jar\help\dssvueHelp.jar;jar\hec.jar;jar\gridUtil.jar;jar\hecdata.jar;jar\rma.jar;jar\images.jar;jar\heclib.jar;jar\sys\jdom.jar;jar\sys\jh.jar;jar\sys\jfreechart.jar;jar\sys\jcommon.jar;jar\sys\jai_core.jar;jar\sys\jai_imageio.jar;jar\sys\jai_codec.jar;jar\sys\jxl.jar;jar\sys\jythonUtils.jar;jar\sys\jythonlib.jar;jar\sys\jython.jar;jar\sys\codebase.jar; hec.dssgui.HecDssVue -s C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/ExampleHydraulicComparison.py 
+Version stamp is 2.0.0.17G date 2010.02.09.04.41 
+::::::::
+::
+:: Initializing Jython interpreter environment.
+:: Application home variable = CWMS_HOME
+:: CWMS_HOME = C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue
+:: Jython script path = jar\sys\jythonLib.jar\lib;jar\sys\jythonUtils.jar;..
+::
+::::::::
+Failed to get environment, environ will be empty: (0, 'Failed to execute command ([\'sh\', \'-c\', \'env\']): java.io.IOException: Cannot run program "sh": CreateProcess error=2, The system cannot find the file specified')
+Debug off; no logging properties file: C:\Users\nschiff2\AppData\Roaming\HEC\HEC-DSSVue/config/properties/logger.properties
+    -----DSS---ZOPEN:  Existing File Opened,  File: C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/HEC-RASModels/STCR/STCR_DesignRuns/STCR_Design.dss
+                       Unit:   71;  DSS Versions - Software: 6-QF, File: 6-OE
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DITCH E STONY CR DITCH/3.617/FLOW/01DEC2006/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DITCH E STONY CR DITCH/3.617/FLOW/01JAN2007/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DITCH E STONY CR DITCH/3.617/STAGE/01DEC2006/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DITCH E STONY CR DITCH/3.617/STAGE/01JAN2007/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DN E STCR 1/0/FLOW/01DEC2006/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DN E STCR 1/0/FLOW/01JAN2007/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DN E STCR 1/0/STAGE/01DEC2006/1HOUR/HUFFQII_100YR12H/
+ -----DSS--- ZREAD Unit   71; Vers.    1:  /E STONY CR DN E STCR 1/0/STAGE/01JAN2007/1HOUR/HUFFQII_100YR12H/
+
+C:\Users\nschiff2\Documents\MWRDGC_WSRR\Optimatics\optimizer-hecras-integration\src\HEC-DSSVue>endlocal
+running HEC-RAS...
+HEC-RAS completed in 0.995672430521 seconds
+"{'E STONY CR DITCH E STONY CR DITCH/3.617': {'peakFlowTiming': 56278440, 'peakFlowRate': 245.1110076904297, 'peakStage': 592.1857299804688}, 'E STONY CR DN E STCR 1/0': {'peakFlowTiming': 56278680, 'peakFlowRate': 1083.9256591796875, 'peakStage': 585.4299926757812}}"
