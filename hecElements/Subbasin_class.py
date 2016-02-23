@@ -14,16 +14,18 @@ class Subbasin(Element):
         self.canvasx = Property('Canvas X')
         self.canvasy = Property('Canvas Y')
         self.canopy = Property('Canopy')
+        self.rlsrate = Property('Release Rate')
         self.staticProperties = [self.area.name, self.downstream.name, self.curvenum.name, self.impervious.name,
-                                 self.canvasx.name, self.canvasy.name, self.canopy.name]
+                                 self.canvasx.name, self.canvasy.name, self.canopy.name, self.rlsrate.name]
 
     @classmethod
-    def readSubbasin(cls, currentLine, basinsrc, basinsink, pdatasink, dssfile, redevel, curvenum, rlsrate):
+    def readSubbasin(cls, currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate):
         s = Subbasin()
         super(Subbasin, s).deserialize(currentLine, basinsrc)
-        s.divideSubbasin(basinsink, pdatasink, dssfile, redevel, curvenum, rlsrate)
+        sNew, soname = s.divideSubbasin(basinsink, redevel, curvenum, rlsrate)
+        s.rlsrate.setValue(rlsrate)
         s.serialize(basinsink)
-        return s
+        return s, sNew, soname
 
     def add(self, a):
         if isinstance(a,Property):
@@ -73,13 +75,15 @@ class Subbasin(Element):
                 except LookupError:
                     print("Property not found.")
 
-    def divideSubbasin(self, basinsink, pdatasink, dssfile, redevel, curvenum, rlsrate):
+    def divideSubbasin(self, basinsink, redevel, curvenum, rlsrate):
         #may need to be modified once I figure out exactly how this will be used
         j = Junction.newJunction(self, basinsink)
-        r = Reservoir.newReservoir(self, basinsink, pdatasink, dssfile, redevel, rlsrate)
+        r = Reservoir.newReservoir(self, basinsink, redevel, rlsrate)
         sNew = Subbasin.newSubbasin(self, basinsink, redevel, curvenum)
         self.area.setValue(self.area.getAsFloat() - sNew.area.getAsFloat())
         self.downstream.setValue('J ' + self.getIdentifier())
+        sNew.rlsrate.setValue(rlsrate)
+        return sNew, r.storageoutflow.getAsString()
 
     @classmethod
     def newSubbasin(cls, s, basinsink, redevel, curvenum):

@@ -4,9 +4,8 @@ import java.awt as awt
 class Subwatershed(dict):
 
     # List of required keys for Subwatershed dict item
-    # 'elements' is a list of type Element with one item for each element of Subwatershed
     _keys = ['watershed', 'subwatershed', 'basinin', 'basinout', 'pdatafile', 'dssfile', 'redevelopment', 'curvenumber',
-             'releaserate', 'elements', 'pdata']
+             'releaserate']
 
     @classmethod
     def getKeys(cls):
@@ -19,7 +18,6 @@ class Subwatershed(dict):
         self.chooseWatershed()
         self.getFilenames()
         self.getParams()
-        self.initElements()
 
     def chooseWatershed(self):
         # GUI to choose the watershed and subwatershed
@@ -87,6 +85,7 @@ class Subwatershed(dict):
 
         # Create panel for button that stores the values entered
         setButton = swing.JButton('Set parameters', actionPerformed=(lambda x: self.setParams(rd, cn, rr, frame)))
+        self.setParams(rd, cn, rr, frame)
 
         # Add panels to the window and make the window visible
         frame.add(futureparams, awt.BorderLayout.NORTH)
@@ -94,7 +93,4 @@ class Subwatershed(dict):
         frame.add(inbutton, awt.BorderLayout.SOUTH)
         #        setButton.addMouseListener(awt.event.MouseListener.mouseClicked(self, self.setParams(rd, cn, rr, frame)))
         frame.pack()
-        frame.setVisible(True)
-
-    def initElements(self):
-        self['elements'] = []
+#        frame.setVisible(True)

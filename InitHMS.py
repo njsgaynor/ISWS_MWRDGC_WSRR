@@ -3,48 +3,74 @@
 # Created for: Illinois State Water Survey
 # Date: February 2016
 
+# add Java directories to system path
 import sys
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/bin/java.exe")
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/src/java")
 sys.path.append("C:/Program Files/Java/javahelp-2.0.05.jar")
 
-#import java.lang
-#import javax.help
-import shutil
-
-import Subwatershed_class as Subwatershed
-import Basin_class as Basin
-import Subbasin_class as Subbasin
-import Junction_class as Junction
-import Reservoir_class as Reservoir
-import Reach_class as Reach
-import Diversion_class as Diversion
-import Sink_class as Sink
-import BasinSchema_class as BasinSchema
+from Subwatershed_class import Subwatershed
 
 
 def updatePdataFile(pd, pdatasink):
     pd.serialize(pdatasink)
 
 
-def readBasinFile(basinin, basinout, pdatafile, dssfile, redevel, curvenum, rlsrate):
-    pdatabackup = pdatafile + ".back"
-    with open(basinin, 'rb') as basinsrc, open(basinout, 'wb') as basinsink, open(pdatafile, 'ab') as pdatasink, \
-            open(pdatabackup, 'wb') as pdatacopy:
-        shutil.copyfileobj(pdatasink, pdatabackup)
+def readBasinFile(ws):
+    # import Python modules
+    #import java.lang
+    #import javax.help
+    import shutil
+    import json
+
+    # import project-related modules
+#    from hecElements.Basin_class import Basin
+    import hecElements.Basin_class
+    from hecElements.Subbasin_class import Subbasin
+    from hecElements.Junction_class import Junction
+    from hecElements.Reservoir_class import Reservoir
+    from hecElements.Reach_class import Reach
+    from hecElements.Diversion_class import Diversion
+    from hecElements.Sink_class import Sink
+    from hecElements.BasinSchema_class import BasinSchema
+    from TableNames_class import TableNames
+    from hecElements.Pdata_class import Pdata
+    from SBDict_class import SBDict
+
+    pdatabackup = ws['pdatafile'] + ".back"
+    tableFile = "table_names.txt"
+    subbasinFile = "subbasin_records.json"
+    # Make backup of *.pdata file
+#    with open(ws['pdatafile'], 'ab') as pdatasink, open(pdatabackup, 'wb') as pdatacopy:
+#        shutil.copyfileobj(pdatasink, pdatacopy)
+    shutil.copyfile(ws['pdatafile'], pdatabackup)
+    # Read elements from *.basin file and split the subbasins; write to new *.basin file
+    # Also create list of table names (txt) and and subbasins/release rates (JSON) and write to files for later use
+    with open(ws['basinin'], 'rb') as basinsrc, open(ws['basinout'], 'wb') as basinsink, open(ws['pdatafile'], 'ab') \
+            as pdatasink, open(tableFile, 'wb') as tableSink, open(subbasinFile, 'wb') as subbasinsink:
+        tableList = TableNames()
+        sbAll = SBDict()
         recordnum = 0
         currentLine = ' '
         while not currentLine == '':
             try:
                 currentLine = basinsrc.readline()
                 if(currentLine.startswith('End:')):
-                    b.serialize(basinsink)
-                    recordnum += 1
+                    try:
+                        b.serialize(basinsink)
+                        recordnum += 1
+                    except:
+                        print("Unexpected 'End:' statement in " + ws['basinin'] + ". Exiting.")
+                        return
                 elif currentLine.startswith('Basin:'):
                     b = Basin.readBasin(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Subbasin:'):
-                    b = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, pdatasink, dssfile, dssfile, redevel,
-                                              curvenum, rlsrate)
+                    b, b2, soname = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, ws['redevelopment'],
+                                                      ws['curvenumber'], ws['releaserate'])
+                    tableList.append(soname)
+                    Pdata.newPdata(soname, pdatasink, ws['dssfile'])
+                    sbAll.add(b)
+                    sbAll.add(b2)
                 elif currentLine.startswith('Junction:'):
                     b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
@@ -60,27 +86,20 @@ def readBasinFile(basinin, basinout, pdatafile, dssfile, redevel, curvenum, rlsr
                 elif currentLine.endswith('\n'):
                     pass
                 elif currentLine == '':
-                    print("End of file " + basinin + ".")
+                    print("End of file " + ws['basinin'] + ".")
+                    tableList.writeTableFile(tableSink)
+                    json.dump(sbAll, subbasinsink)
                     return
                 else:
                     print(currentLine)
                     raise RuntimeError("Invalid subwatershed element. Check input *.basin file.")
             except IOError:
-                print("Cannot read file " + basinin + " or " + basinout + ".")
+                print("Cannot read file " + ws['basinin'] + " or " + ws['basinout'] + ".")
                 return
-#            elements.append(b)
-
-
-def writeBasinFile(**ws):
-    print(ws['basinout'])
-    with open(ws['basinout'],'w') as basinsink:
-        ws['elements'].serialize(basinsink)
 
 
 if __name__=="__main__":
     ws = Subwatershed()
-    readBasinFile(ws['basinin'], ws['basinout'], ws['pdatafile'], ws['dssfile'], ws['redevelopment'], ws['curvenumber'],
-                  ws['releaserate'])
+    readBasinFile(ws)
     print('Program finished successfully.')
-#    writeBasinFile(ws)
 #    updatePdataFile(ws['pdata'])

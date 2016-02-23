@@ -48,6 +48,8 @@ class Element(list):
         for line in self:
             if(line.getName() == ''):
                 outfile.write('\n')
+            elif(line.getName() == 'Release Rate'):
+                pass
             else:
                 outfile.write('    ' + line.getName() + ': ' + line.getAsString() + '\n')
         outfile.write('End:\n\n')

@@ -10,13 +10,13 @@ class Pdata(Element):
         self.pathname = Property(None)
         self.staticProperties = [self.dssfile.name, self.pathname.name]
 
-    def newPdata(self, r, pdatasink, dssfile):
+    def newPdata(self, soname, pdatasink, dssfile):
         self.__init__()
         # Add a new storage-outflow table to pdata
         nowDT = datetime.today()
         nowDate = str(nowDT.day) + ' ' + calendar.month_name[nowDT.month] + ' ' + str(nowDT.year)
         nowTime = nowDT.hour + ':' + nowDT.minute + ':' + nowDT.second
-        self.setIdentifier(r.storageoutflow.getAsString())
+        self.setIdentifier(soname)
         super(Pdata, self).add(Property.newProperty('Table Type', 'Storage-Outflow'))
         super(Pdata, self).add(Property.newProperty('Last Modified Date', str(nowDate)))
         super(Pdata, self).add(Property.newProperty('Last Modified Time', str(nowTime)))
@@ -26,4 +26,3 @@ class Pdata(Element):
         super(Pdata, self).add(Property.newProperty('DSS File', dssfile))
         super(Pdata, self).add(Property.newProperty('Pathname', '//' + self.getIdentifier() + '/STORAGE-FLOW///TABLE/'))
         self.serialize(pdatasink)
-        return self

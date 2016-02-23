@@ -1,7 +1,5 @@
 import Element_class as Element
 import Property_class as Property
-import Pdata_class as Pdata
-import TableNames_class as TableNames
 
 class Reservoir(Element):
     def __init__(self):
@@ -41,7 +39,7 @@ class Reservoir(Element):
                     print("Property not found.")
 
     @classmethod
-    def newReservoir(cls, s, basinsink, pdatasink, dssfile, redevel, rlsrate):
+    def newReservoir(cls, s, basinsink, redevel, rlsrate, tableList):
         r = Reservoir()
         r.setIdentifier('Reservoir ' + s.getIdentifier())
         r.downstream = Property.newProperty('Downstream', 'J ' + s.getIdentifier())
@@ -55,6 +53,4 @@ class Reservoir(Element):
         super(Reservoir, r).add(Property.newProperty('Initial Outflow Equals Inflow', 'Yes'))
         super(Reservoir, r).add(r.storageoutflow)
         r.serialize(basinsink)
-        Pdata.newPdata(r, pdatasink, dssfile)
-        TableNames.append(r.storageoutflow.getAsString())
         return r
