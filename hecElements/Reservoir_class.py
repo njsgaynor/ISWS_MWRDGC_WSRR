@@ -1,12 +1,12 @@
-import Element_class as Element
-import Property_class as Property
+from Element_class import Element
+from Property_class import Property
 
 class Reservoir(Element):
     def __init__(self):
         super(Reservoir, self).__init__('Reservoir', None)
-        self.downstream = Property(None)
-        self.storageoutflow = Property(None)
-        self.staticProperties = [self.downstream.name, self.storageoutflow.name]
+        self.downstream = Property('Downstream')
+        self.storageoutflow = Property('Storage-Outflow Table')
+        self.staticProperties = [self.downstream.getName(), self.storageoutflow.getName()]
 
     @classmethod
     def readReservoir(cls, currentLine, basinsrc, basinsink):
@@ -39,7 +39,7 @@ class Reservoir(Element):
                     print("Property not found.")
 
     @classmethod
-    def newReservoir(cls, s, basinsink, redevel, rlsrate, tableList):
+    def newReservoir(cls, s, basinsink, redevel, rlsrate):
         r = Reservoir()
         r.setIdentifier('Reservoir ' + s.getIdentifier())
         r.downstream = Property.newProperty('Downstream', 'J ' + s.getIdentifier())

@@ -1,4 +1,5 @@
-import Element_class as Element
+from Element_class import Element
+
 
 class Basin(Element):
     def __init__(self):

@@ -1,7 +1,7 @@
-class Property:
+class Property(dict):
     def __init__(self, name):
-        self.name = name
-        self.value = None
+        super(Property, self).__init__()
+        self[name] = None
 
     @classmethod
     def newProperty(cls, name, value):
@@ -10,25 +10,25 @@ class Property:
         return p
 
     def getValue(self):
-        return self.value
+        return self[self.getName()]
 
     def setValue(self, value):
-        self.value = value
+        self[self.getName()] = value
 
     def getAsFloat(self):
         try:
-            return float(self.value)
+            return float(self[self.getName()])
         except ValueError:
             print("Cannot convert to float.")
 
     def getAsString(self):
         try:
-            return str(self.value)
+            return str(self[self.getName()])
         except ValueError:
             print("Cannot convert to string.")
 
     def getName(self):
-        return self.name
+        return self.keys()[0]
 
     def setName(self, name):
         self.name = name

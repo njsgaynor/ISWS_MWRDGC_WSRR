@@ -1,7 +1,7 @@
-import Element_class as Element
-import Property_class as Property
-import Junction_class as Junction
-import Reservoir_class as Reservoir
+from Element_class import Element
+from Property_class import Property
+from Junction_class import Junction
+from Reservoir_class import Reservoir
 import copy
 
 class Subbasin(Element):
@@ -15,8 +15,9 @@ class Subbasin(Element):
         self.canvasy = Property('Canvas Y')
         self.canopy = Property('Canopy')
         self.rlsrate = Property('Release Rate')
-        self.staticProperties = [self.area.name, self.downstream.name, self.curvenum.name, self.impervious.name,
-                                 self.canvasx.name, self.canvasy.name, self.canopy.name, self.rlsrate.name]
+        self.staticProperties = [self.area.getName(), self.downstream.getName(), self.curvenum.getName(),
+                                 self.impervious.getName(), self.canvasx.getName(), self.canvasy.getName(),
+                                 self.canopy.getName(), self.rlsrate.getName()]
 
     @classmethod
     def readSubbasin(cls, currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate):

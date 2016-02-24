@@ -1,12 +1,12 @@
-import Element_class as Element
-import Property_class as Property
+from Element_class import Element
+from Property_class import Property
 
 class Diversion(Element):
     def __init__(self):
         super(Diversion, self).__init__('Diversion', None)
-        self.downstream = Property(None)
-        self.divertto = Property(None)
-        self.staticProperties = [self.downstream.name, self.divertto.name]
+        self.downstream = Property('Downstream')
+        self.divertto = Property('Divert To')
+        self.staticProperties = [self.downstream.getName(), self.divertto.getName()]
 
     @classmethod
     def readDiversion(cls, currentLine, basinsrc, basinsink):

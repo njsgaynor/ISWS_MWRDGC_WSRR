@@ -1,4 +1,4 @@
-import Property_class as Property
+from Property_class import Property
 
 class Element(list):
     def __init__(self, category, identifier):
@@ -30,9 +30,9 @@ class Element(list):
         currentLine = infile.readline()
         while not currentLine.startswith('End:'):
             if not currentLine == '\n':
-                p = Property(None)
+#                p = Property(None)
                 lineList = currentLine.strip('\n').strip().split(': ')
-                p.setName(lineList[0])
+                p = Property(lineList[0])
                 try:
                     p.setValue(lineList[1])
                 except IndexError:

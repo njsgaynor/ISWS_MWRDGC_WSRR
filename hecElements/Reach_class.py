@@ -1,11 +1,11 @@
-import Element_class as Element
-import Property_class as Property
+from Element_class import Element
+from Property_class import Property
 
 class Reach(Element):
     def __init__(self):
         super(Reach, self).__init__('Reach', None)
-        self.downstream = Property(None)
-        self.staticProperties = [self.downstream.name]
+        self.downstream = Property('Downstream')
+        self.staticProperties = [self.downstream.getName()]
 
     @classmethod
     def readReach(cls, currentLine, basinsrc, basinsink):

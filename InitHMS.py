@@ -24,8 +24,8 @@ def readBasinFile(ws):
     import json
 
     # import project-related modules
-#    from hecElements.Basin_class import Basin
-    import hecElements.Basin_class
+    from hecElements.Basin_class import Basin
+#    import hecElements.Basin_class
     from hecElements.Subbasin_class import Subbasin
     from hecElements.Junction_class import Junction
     from hecElements.Reservoir_class import Reservoir
@@ -36,6 +36,9 @@ def readBasinFile(ws):
     from TableNames_class import TableNames
     from hecElements.Pdata_class import Pdata
     from SBDict_class import SBDict
+#    from hecElements import Basin_class
+#    import hecElements
+    pass
 
     pdatabackup = ws['pdatafile'] + ".back"
     tableFile = "table_names.txt"
@@ -69,8 +72,8 @@ def readBasinFile(ws):
                                                       ws['curvenumber'], ws['releaserate'])
                     tableList.append(soname)
                     Pdata.newPdata(soname, pdatasink, ws['dssfile'])
-                    sbAll.add(b)
-                    sbAll.add(b2)
+                    sbAll.add(b, ws['releaserate'])
+                    sbAll.add(b2, ws['releaserate'])
                 elif currentLine.startswith('Junction:'):
                     b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
@@ -102,4 +105,4 @@ if __name__=="__main__":
     ws = Subwatershed()
     readBasinFile(ws)
     print('Program finished successfully.')
-#    updatePdataFile(ws['pdata'])
+    sys.exit()
