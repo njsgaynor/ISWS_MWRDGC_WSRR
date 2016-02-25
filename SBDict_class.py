@@ -2,18 +2,19 @@ class SBDict(dict):
     def __init__(self):
         super(dict, self).__init__()
 
-    def add(self, s, rlsrate):
-        s.rlsrate = rlsrate
-        self.update({s.getIdentifier(): s})
+    def add(self, x):
+        self.update(x)
 
     def remove(self, x):
         del self[x]
 
     def getKeys(self):
-        self.keys()
+        return self.keys()
 
-    def getArea(self, x):
-        return self[x].area
+    def getValues(self):
+        return self.values()
 
-    def getReleaseRate(self, x):
-        return self[x].rlsrate
+    def writeSbPairs(self, sbOut):
+        import json
+        with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src' + sbOut, 'wb') as dumpFile:
+            json.dump(self, dumpFile)

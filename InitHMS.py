@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Jython 2.7
 # Original author: Nicole JS Gaynor (nschiff2 [at] illinois [dot] edu)
 # Created for: Illinois State Water Survey
@@ -5,6 +7,8 @@
 
 # add Java directories to system path
 import sys
+import os
+from subprocess import call
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/bin/java.exe")
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/src/java")
 sys.path.append("C:/Program Files/Java/javahelp-2.0.05.jar")
@@ -21,11 +25,8 @@ def readBasinFile(ws):
     #import java.lang
     #import javax.help
     import shutil
-    import json
 
-    # import project-related modules
     from hecElements.Basin_class import Basin
-#    import hecElements.Basin_class
     from hecElements.Subbasin_class import Subbasin
     from hecElements.Junction_class import Junction
     from hecElements.Reservoir_class import Reservoir
@@ -36,12 +37,9 @@ def readBasinFile(ws):
     from TableNames_class import TableNames
     from hecElements.Pdata_class import Pdata
     from SBDict_class import SBDict
-#    from hecElements import Basin_class
-#    import hecElements
-    pass
 
     pdatabackup = ws['pdatafile'] + ".back"
-    tableFile = "table_names.txt"
+    tableFile = "table_names.json"
     subbasinFile = "subbasin_records.json"
     # Make backup of *.pdata file
 #    with open(ws['pdatafile'], 'ab') as pdatasink, open(pdatabackup, 'wb') as pdatacopy:
@@ -50,7 +48,7 @@ def readBasinFile(ws):
     # Read elements from *.basin file and split the subbasins; write to new *.basin file
     # Also create list of table names (txt) and and subbasins/release rates (JSON) and write to files for later use
     with open(ws['basinin'], 'rb') as basinsrc, open(ws['basinout'], 'wb') as basinsink, open(ws['pdatafile'], 'ab') \
-            as pdatasink, open(tableFile, 'wb') as tableSink, open(subbasinFile, 'wb') as subbasinsink:
+            as pdatasink:
         tableList = TableNames()
         sbAll = SBDict()
         recordnum = 0
@@ -70,10 +68,9 @@ def readBasinFile(ws):
                 elif currentLine.startswith('Subbasin:'):
                     b, b2, soname = Subbasin.readSubbasin(currentLine, basinsrc, basinsink, ws['redevelopment'],
                                                       ws['curvenumber'], ws['releaserate'])
-                    tableList.append(soname)
+                    tableList.append([b2.getIdentifier(), soname, b2.area.getAsFloat(), ws['releaserate']])
                     Pdata.newPdata(soname, pdatasink, ws['dssfile'])
-                    sbAll.add(b, ws['releaserate'])
-                    sbAll.add(b2, ws['releaserate'])
+                    sbAll.add({b.getIdentifier(): b.rlsrate.getAsFloat(), b2.getIdentifier(): b2.rlsrate.getAsFloat()})
                 elif currentLine.startswith('Junction:'):
                     b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
@@ -90,8 +87,8 @@ def readBasinFile(ws):
                     pass
                 elif currentLine == '':
                     print("End of file " + ws['basinin'] + ".")
-                    tableList.writeTableFile(tableSink)
-                    json.dump(sbAll, subbasinsink)
+                    tableList.writeTableFile(tableFile)
+                    sbAll.writeSbPairs(subbasinFile)
                     return
                 else:
                     print(currentLine)
@@ -101,8 +98,26 @@ def readBasinFile(ws):
                 return
 
 
-if __name__=="__main__":
+def modMetFile(metData, hmsPath):
+    metFileName = hmsPath + "/" + metData + ".txt"
+    with open(metFileName, 'ab') as metFile, open('table_names.txt', 'rb') as subbasins:
+        for subbasin in subbasins:
+            lines = ['Subbasin: ', subbasin, '\n    Gage: ', metData, '\n\n    Begin Snow: None\nEnd:\n']
+            metFile.writelines(lines)
+
+
+def main(config):
+    metData = config.rasPlanName
+    hmsPath = config.getHmsProjectPath()
     ws = Subwatershed()
     readBasinFile(ws)
-    print('Program finished successfully.')
-    sys.exit()
+    modMetFile(metData, hmsPath)
+    print('InitHMS.py finished successfully.')
+#    os.chdir('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src')
+#    print(os.getcwd())
+#    os.system('runModel.cmd')
+#    sys.exit()
+
+
+if __name__=="__main__":
+    main()

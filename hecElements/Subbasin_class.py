@@ -15,9 +15,10 @@ class Subbasin(Element):
         self.canvasy = Property('Canvas Y')
         self.canopy = Property('Canopy')
         self.rlsrate = Property('Release Rate')
+        self.redevel = Property('Percent Redevelopment')
         self.staticProperties = [self.area.getName(), self.downstream.getName(), self.curvenum.getName(),
                                  self.impervious.getName(), self.canvasx.getName(), self.canvasy.getName(),
-                                 self.canopy.getName(), self.rlsrate.getName()]
+                                 self.canopy.getName(), self.rlsrate.getName(), self.redevel.getName()]
 
     @classmethod
     def readSubbasin(cls, currentLine, basinsrc, basinsink, redevel, curvenum, rlsrate):
@@ -25,6 +26,7 @@ class Subbasin(Element):
         super(Subbasin, s).deserialize(currentLine, basinsrc)
         sNew, soname = s.divideSubbasin(basinsink, redevel, curvenum, rlsrate)
         s.rlsrate.setValue(rlsrate)
+        s.redevel.setValue(redevel)
         s.serialize(basinsink)
         return s, sNew, soname
 
@@ -84,6 +86,7 @@ class Subbasin(Element):
         self.area.setValue(self.area.getAsFloat() - sNew.area.getAsFloat())
         self.downstream.setValue('J ' + self.getIdentifier())
         sNew.rlsrate.setValue(rlsrate)
+        sNew.redevel.setValue(redevel)
         return sNew, r.storageoutflow.getAsString()
 
     @classmethod

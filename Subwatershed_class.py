@@ -25,8 +25,9 @@ class Subwatershed(dict):
         self['subwatershed'] = None
 
     def getFilenames(self):
-        default_path = 'C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/StonyCreek/Stony_V1.0/' \
-                       'HydrologicModels/ExistingConditions/LucasDitch/LUDT_DesignRuns'
+#        default_path = 'C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/StonyCreek/Stony_V1.0/' \
+#                       'HydrologicModels/ExistingConditions/LucasDitch/LUDT_DesignRuns'
+        default_path = 'C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/HEC-HMSModels/LucasDitch/LUDT_DesignRuns'
         # GUI to get filename of *.basin file for reading - this is from the source version
         basinchoice = swing.JFileChooser(default_path)  #FileFilter="basin"
         #        filter = swing.JFileChooser.FileNameExtensionFilter("*.basin files",["basin"])
