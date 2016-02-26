@@ -10,5 +10,5 @@ class TableNames(list):
 
     def writeTableFile(self, tableOut):
         import json
-        with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src' + tableOut, 'wb') as dumpFile:
+        with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/' + tableOut, 'wb') as dumpFile:
             json.dump(self, dumpFile)

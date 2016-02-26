@@ -16,5 +16,5 @@ class SBDict(dict):
 
     def writeSbPairs(self, sbOut):
         import json
-        with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src' + sbOut, 'wb') as dumpFile:
+        with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src/' + sbOut, 'wb') as dumpFile:
             json.dump(self, dumpFile)

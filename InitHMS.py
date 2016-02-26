@@ -21,9 +21,8 @@ def updatePdataFile(pd, pdatasink):
 
 
 def readBasinFile(ws):
+    print('readBasinFile')
     # import Python modules
-    #import java.lang
-    #import javax.help
     import shutil
 
     from hecElements.Basin_class import Basin
@@ -98,25 +97,23 @@ def readBasinFile(ws):
                 return
 
 
-def modMetFile(metData, hmsPath):
-    metFileName = hmsPath + "/" + metData + ".txt"
-    with open(metFileName, 'ab') as metFile, open('table_names.txt', 'rb') as subbasins:
-        for subbasin in subbasins:
-            lines = ['Subbasin: ', subbasin, '\n    Gage: ', metData, '\n\n    Begin Snow: None\nEnd:\n']
-            metFile.writelines(lines)
+def modMetFile(metFile, metData, hmsPath, scriptPath):
+    import json
+    metFileName = hmsPath + "/" + metFile
+    tableFileName = scriptPath + "/" + "table_names.json"
+    with open(metFileName, 'ab') as metFileObj, open(tableFileName, 'rb') as subbasins:
+        sbList = json.load(subbasins)
+        metFileObj.write('\n\n')
+        for subbasin in sbList:
+            lines = ['Subbasin: ', subbasin[0], '\n    Gage: ', metData, '\n\n    Begin Snow: None\nEnd:\n\n']
+            metFileObj.writelines(lines)
 
 
 def main(config):
-    metData = config.rasPlanName
-    hmsPath = config.getHmsProjectPath()
-    ws = Subwatershed()
+    metFile = config.hmsMetFile + ".met"
+    ws = Subwatershed(config)
     readBasinFile(ws)
-    modMetFile(metData, hmsPath)
-    print('InitHMS.py finished successfully.')
-#    os.chdir('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Optimatics/optimizer-hecras-integration/src')
-#    print(os.getcwd())
-#    os.system('runModel.cmd')
-#    sys.exit()
+    modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), config.scriptPath)
 
 
 if __name__=="__main__":
