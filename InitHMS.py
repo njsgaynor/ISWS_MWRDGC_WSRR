@@ -88,7 +88,7 @@ def readBasinFile(ws):
                     print("End of file " + ws['basinin'] + ".")
                     tableList.writeTableFile(tableFile)
                     sbAll.writeSbPairs(subbasinFile)
-                    return
+                    return tableList
                 else:
                     print(currentLine)
                     raise RuntimeError("Invalid subwatershed element. Check input *.basin file.")
@@ -97,12 +97,13 @@ def readBasinFile(ws):
                 return
 
 
-def modMetFile(metFile, metData, hmsPath, scriptPath):
+def modMetFile(metFile, metData, hmsPath, sbList):
     import json
     metFileName = hmsPath + "/" + metFile
-    tableFileName = scriptPath + "/" + "table_names.json"
-    with open(metFileName, 'ab') as metFileObj, open(tableFileName, 'rb') as subbasins:
-        sbList = json.load(subbasins)
+#    tableFileName = scriptPath + "/" + "table_names.json"
+    with open(metFileName, 'ab') as metFileObj:#, open(tableFileName, 'rb') as subbasins:
+#        sbList = json.load(subbasins)
+#        print(subbasins)
         metFileObj.write('\n\n')
         for subbasin in sbList:
             lines = ['Subbasin: ', subbasin[0], '\n    Gage: ', metData, '\n\n    Begin Snow: None\nEnd:\n\n']
@@ -112,8 +113,8 @@ def modMetFile(metFile, metData, hmsPath, scriptPath):
 def main(config):
     metFile = config.hmsMetFile + ".met"
     ws = Subwatershed(config)
-    readBasinFile(ws)
-    modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), config.scriptPath)
+    tableList = readBasinFile(ws)
+    modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), tableList)
 
 
 if __name__=="__main__":
