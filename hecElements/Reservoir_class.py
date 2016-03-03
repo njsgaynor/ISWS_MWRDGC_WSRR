@@ -25,6 +25,8 @@ class Reservoir(Element):
                 super(Reservoir, self).add(self.storageoutflow)
             else:
                 super(Reservoir, self).add(a)
+        else:
+            print(a, "is not an instance of Property class. Cannot be added.")
 
     def remove(self, a):
         if isinstance(a,Property):

@@ -21,6 +21,8 @@ class Reach(Element):
                 super(Reach, self).add(self.downstream)
             else:
                 super(Reach, self).add(a)
+        else:
+            print(a, "is not an instance of Property class. Cannot be added.")
 
     def remove(self, a):
         if isinstance(a,Property):

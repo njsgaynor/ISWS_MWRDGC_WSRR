@@ -21,6 +21,8 @@ class Junction(Element):
                 super(Junction, self).add(self.downstream)
             else:
                 super(Junction, self).add(a)
+        else:
+            print(a, "is not an instance of Property class. Cannot be added.")
 
     def remove(self, a):
         if isinstance(a,Property):

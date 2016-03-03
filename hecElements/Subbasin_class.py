@@ -55,6 +55,8 @@ class Subbasin(Element):
                 super(Subbasin, self).add(self.canopy)
             else:
                 super(Subbasin, self).add(a)
+        else:
+            print(a, "is not an instance of Property class. Cannot be added.")
 
     def remove(self, a):
         if isinstance(a,Property):
