@@ -35,7 +35,7 @@ class Junction(Element):
     @classmethod
     def newJunction(cls, s, basinsink):
         j = Junction()
-        j.setIdentifier('J ' + str(s.getIdentifier()))
+        j.setIdentifier('JN ' + str(s.getIdentifier()))
         j.downstream = s.downstream
         p = Property.newProperty('Canvas X', s.canvasx.getValue())
         super(Junction, j).add(Property.newProperty('Canvas X', s.canvasx.getValue()))

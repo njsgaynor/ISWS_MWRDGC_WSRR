@@ -118,4 +118,6 @@ def main(config):
 
 
 if __name__=="__main__":
-    main()
+    from HMSconfig import HMSConfig
+    config = HMSConfig()
+    main(config)
