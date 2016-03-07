@@ -10,18 +10,15 @@
 
 import csv
 from operator import itemgetter
+from BankStationConfig import BankStation_config
 
-def main():
-    (bank_ID, timestage_ID, maxstage_ID) = match_stations()
-    OOB_DepthTime(bank_ID, timestage_ID, maxstage_ID)
-
-def match_stations():
+def getTimeStage(timeStageFile):
     # Open CSV file that contains the hourly stage data for Stony Creek watershed and read whole file into a list.
     #   The CSV was copy-pasted from HEC-RAS output to Excel (data and headers) and saved as a CSV file. This took
     #   two batches of copying because HEC-RAS can only display up to 500 pathnames at a time. HEC-RAS was used instead
     #   of HEC-DSSVue because HEC-DSSVue does not include the name of the reach and some of the stations had slightly
     #   different numbers in different reaches.
-    with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/StonyCreek_v6_1_timestage.csv', 'rb') as csvfile:
+    with open(timeStageFile, 'rb') as csvfile:
         timestage = list(csv.reader(csvfile, delimiter=','))
         print('timestage ',len(timestage[0]))   #used for debugging
 
@@ -57,15 +54,15 @@ def match_stations():
             count += 1
         # Sort by station ID, then river/reach for matching with other data sets
         timestage_ID.sort(key=itemgetter(1, 0))
-        # Delete variables no longer in use
-        del timestage   # u, v, y, z could also be deleted
+        return timestage_ID
 
+def getBankElevations(bankFile):
     # Open CSV file that contains the bank station elevations for each station in the Stony Creek watershed and read whole
     # file into a list.
     #   The CSV was copy-pasted from HEC-RAS (Profile output table) to Excel (data and headers) and saved as a CSV file.
     #   Interpolated cross sections must be included or only four decimal places of the station ID will show. This data is
     #   not available in HEC-DSSVue.
-    with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/StonyCreek_v6_1_banks.csv', 'rb') as csvfile:
+    with open(bankFile, 'rb') as csvfile:
         bank = list(csv.reader(csvfile, delimiter=','))
         print('bank ',len(bank))   #used for debugging
 
@@ -74,7 +71,7 @@ def match_stations():
         #   Then concatenate river and reach into a single, uppercase element and assign to element 1.
         #   Store river/reach, station ID, left bank, and right bank for each station in bank_ID.
         bank_ID = []
-        temp = []   # used to store interpolated station IDs for later use
+        starStations = []   # used to store interpolated station IDs for later use
         count = 0
         for t in bank:
             t[1] = " ".join(bank[count][0:2])
@@ -84,31 +81,30 @@ def match_stations():
                 if t[2] > 0:
                     bank_ID.append(t[1:])
             except ValueError:
-                temp.append(t[1:3])
+                starStations.append(t[1:3])
                 pass
             count += 1
         # Sort by station ID, then river/reach for matching with other data sets
         bank_ID.sort(key=itemgetter(1, 0))
-        # Delete variables no longer in use
-        del bank    # could also delete t
+        return bank_ID, starStations
 
+def createStarStationList(starStations):
         # Create list of interpolated stations. This is needed to find interpolated stations in maxstage, where the
         # interpolated stations are not marked. Stores river/reach and ID in interp_ID.
-        count = 0
         interp_ID = []
-        for a in temp:
+        for a in starStations:
             a[1] = a[1].strip()
             a[1] = a[1].strip('*')
             try:
                 b = float(a[1])
-                interp_ID.append([a[0], float(a[1])])
+                interp_ID.append([a[0], b])
             except ValueError:
                 pass
-        # Sort for easier searching if need to find things manually
-#        interp_ID.sort()
-        # Delete variables no longer in use
-        del temp    # could also delete a, b
+                # Sort for easier searching if need to find things manually
+            #        interp_ID.sort()
+        return interp_ID
 
+def getMaxStage(maxStageFile, interp_ID):
     # Open CSV file that contains the max stage for each station in the Stony Creek watershed and read whole file into a
     # list.
     #   The CSV was copy-pasted from HEC-RAS output to Excel (data and headers), manually condensed into a single sheet with
@@ -117,7 +113,7 @@ def match_stations():
     #   sections, so the interpolated river/reach and IDs (interp_ID) were pulled from the bank stations and used to filter
     #   out the interpolated stations. In addition, six decimal places must be used to include the entire station ID for all
     #   stations.
-    with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/StonyCreek_v6_1_maxstage.csv', 'rb') as csvfile:
+    with open(maxStageFile, 'rb') as csvfile:
         maxstage = list(csv.reader(csvfile, delimiter=','))
         print('maxstage ',len(maxstage))   #used for debugging
 
@@ -138,20 +134,27 @@ def match_stations():
                 pass
         # Sort by station ID, then river/reach for matching with other data sets
         maxstage_ID.sort(key=itemgetter(1, 0))
-        # Delete variables no longer in use
-        del maxstage    # could also delete t
+        return maxstage_ID
 
+def checkInputs(bank_ID, timestage_ID, maxstage_ID):
     # Debug which stations don't match between maxstage, bank, and timestage
-        count = 0
-        for y in maxstage_ID:
-            if (maxstage_ID[count][1]-bank_ID[count][1])!=0:
-                print(bank_ID[count][1],maxstage_ID[count][1])
-            count += 1
+    count = 0
+    for y in maxstage_ID:
+        if (maxstage_ID[count][1]-bank_ID[count][1])!=0:
+            print(bank_ID[count][1],maxstage_ID[count][1])
+        count += 1
 
     # Used to check that each data set has the same number of stations (debugging)
     print('maxstage_ID ',len(maxstage_ID))
     print('timestage_ID ',len(timestage_ID))
     print('bank_ID ',len(bank_ID))
+
+def match_stations(config):
+    timestage_ID = getTimeStage(config.timestageFileName)
+    bank_ID, starStations = getBankElevations(config.bankFileName)
+    interp_ID = createStarStationList(starStations)
+    maxstage_ID = getMaxStage(config.maxstageFileName, interp_ID)
+    checkInputs(bank_ID, timestage_ID, maxstage_ID)
 
     return (bank_ID, timestage_ID, maxstage_ID)
 
@@ -203,14 +206,22 @@ def OOB_DepthTime(bank_ID, timestage_ID, maxstage_ID):
                         pass
         else:
             raise Exception('At least one station location does not match (BankStation_compare.py).')
+    return overflow
 
+def writeOOB_DepthTime(outFile, overflow):
     # Write overflow to a CSV file for further analysis or viewing in Excel
-    with open('C:/Users/nschiff2/Documents/MWRDGC_WSRR/Watershed_progs/OOB_StonyCreek_v6_1.csv', 'wb') as output:
+    with open(outFile, 'wb') as output:
         writer = csv.writer(output)
         writer.writerows(overflow)
 
 # Used to look at state of variables for debugging
 print('done')
+
+def main():
+    config = BankStation_config()
+    (bank_ID, timestage_ID, maxstage_ID) = match_stations(config)
+    overflow = OOB_DepthTime(bank_ID, timestage_ID, maxstage_ID)
+    writeOOB_DepthTime(config.outFileName, overflow)
 
 if __name__ == '__main__':
     main()
