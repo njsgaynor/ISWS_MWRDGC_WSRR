@@ -2,14 +2,23 @@
 Code repository for automation scripts related to the Metropolitan Water
 Reclamation District of Greater Chicago Watershed Release Rate project
 at the Illinois State Water Survey (2015-2016)
+Creator: Nicole JS Gaynor
 
 InitHMS.py is the main script in this package. It can be run directly or
 imported as a module and run using InitHMS.main(config). This was
 developed using Python 2.7.5.
 
+
 How to run:
-1. Modify HMSconfig.py to find the files that need to be modified.
-2. Type "python InitHMS > InitHMS.out" into the Windows command line.
+1. Modify HMSconfig.py to find the files that need to be modified and to
+reflect the characteristics of the future subbasins.
+2. Open Windows Command Processor.
+3. Change to directory containing runInitHMS.cmd and InitHMS.py ("dir"
+lists directory contents and "cd" changes directory).
+4. Type "runInitHMS.cmd" into the Windows command line and press Enter.
+Output will be saved to InitHMSout.txt. Output is currently minimal if
+there are no errors.
+
 
 Structure:
 InitHMS.py
@@ -26,9 +35,22 @@ InitHMS.py
     -main(config): drives the workflow
 
 Subwatershed_class.py
-    -description: 
-    -depends on: 
-    -
+    -description: dictionary class that stores subwatershed
+	characteristics, with _keys pre-defined for watershed name, 
+	subwatershed name, *.basin input file, *.basin output file,
+	*.pdata file, *.dss file, % redevelopment, curve number, and
+	release rate
+    -depends on: None
+    -getKeys: returns keys for instances
+	-__init__(config): instantiates Subwatershed with keys in _keys;
+	assigns value of None to pre-defined keys. Calls functions to
+	add real values to keys from config file.
+	-chooseWatershed: assigns values to watershed and subwatershed
+	keys; both currently set to None
+	-setFilenames(config): assigns values of *.basin input file,
+	*.basin output file, *.pdata file, and *.dss file
+	-setParams(config): assigns % redevelopment, curve number,
+	and release rate to appropriate keys
 
 
 SBDict_class.py
@@ -219,5 +241,9 @@ Pdata_class.py
     -description: 
     -depends on: Element_class, Property_class, datetime.datetime,
     calendar
-    -__init__: instantiates new Element item with category "Table" and
-    Properties for DSS file where 
+    -__init__: instantiates new Element item with category "Table";
+    Properties for DSS file that contains the storage-outflow table
+	and the path to the table within the DSS file.
+	-newPdata(soname, pdatasink, dssfile) [classmethod]: instantiates
+	new Pdata; creates and adds all Properties for new entry in *.pdata
+	file. Writes instance to *.pdata file.

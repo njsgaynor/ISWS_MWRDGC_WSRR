@@ -11,14 +11,22 @@
 import csv
 from operator import itemgetter
 from BankStationConfig import BankStation_config
-import BankStationData
 from subprocess import call
+import pickle
+import os
 
 def getData():
-    call(["HEC-DSSVue.cmd", "-s", "getStageData.py"], shell=True)
+    print("-----------------getData------------------")
+    popd=os.getcwd()
+    dssvuePath = "C:/Program Files (x86)/HEC/HEC-DSSVue/"
+    os.chdir(dssvuePath)
+    scriptPath = "C:/Users/nschiff2/ISWS_MWRDGC_WSRR/"
+    call(["HEC-DSSVue.cmd", "-s", scriptPath + "getStageData.py"], shell=True)
+    os.chdir(popd)
+    print("---------------getData end----------------")
 
-def getTimeStage(dataFile):
-    timestage = BankStationData.getTimestageData(dataFile)
+def getTimeStage():
+    timestage = pickle.load(open("timestage.txt", 'rb'))
     # For every item in timestage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address.
     for key in timestage:
@@ -42,13 +50,11 @@ def getBankElevations(bankFile):
     with open(bankFile, 'rb') as csvfile:
         bank = list(csv.reader(csvfile, delimiter=','))
         print('bank ',len(bank))   #used for debugging
-
         # For every column in bank (each station in Stony Creek), keep the data only if it is not an interpolated station.
         #   The first three elements are river, reach, and station ID. Station ID needs to be converted to a float.
         #   Then concatenate river and reach into a single, uppercase element and assign to element 1.
         #   Store river/reach, station ID, left bank, and right bank for each station in bank_ID.
         bank_ID = []
-        starStations = []   # used to store interpolated station IDs for later use
         count = 0
         for t in bank:
             t[1] = " ".join(bank[count][0:2])
@@ -58,15 +64,14 @@ def getBankElevations(bankFile):
                 if t[2] > 0:
                     bank_ID.append(t[1:])
             except ValueError:
-                starStations.append(t[1:3])
                 pass
             count += 1
         # Sort by station ID, then river/reach for matching with other data sets
         bank_ID.sort(key=itemgetter(1, 0))
-        return bank_ID, starStations
+        return bank_ID
 
-def getMaxStage(dataFile, timestage):
-    maxstage = BankStationData.getMaxstageData(dataFile)
+def getMaxStage(timestage):
+    maxstage = pickle.load(open("maxstage.txt", 'rb'))
     # For every item in maxstage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address. Timestage is used as the reference standard
     # for which stations to keep.
@@ -85,18 +90,16 @@ def checkInputs(bank, timestage, maxstage):
     for y in maxstage:
         assert bank.has_key(y)
         assert timestage.has_key(y)
-
     # Used to check that each data set has the same number of stations (debugging)
-    print('maxstage_ID ',len(maxstage))
-    print('timestage_ID ',len(timestage))
-    print('bank_ID ',len(bank))
+    print('maxstage ',len(maxstage))
+    print('timestage ',len(timestage))
+    print('bank ',len(bank))
 
 def match_stations(config):
-    timestage = getTimeStage(config.dssFileName)
-    bank = getBankElevations(config.dssFileName)
-    maxstage = getMaxStage(config.dssFileName, timestage)
+    timestage = getTimeStage()
+    bank = getBankElevations(config.bankFileName)
+    maxstage = getMaxStage(timestage)
     checkInputs(bank, timestage, maxstage)
-
     return (bank, timestage, maxstage)
 
 def getStationID(item):
@@ -112,7 +115,6 @@ def OOB_DepthTime(bank, timestage, maxstage):
     # For each station
     for item in bank, count in len(bank):
         riverReach, stationID = getStationID(item)
-
         overflow.append([riverReach, stationID])
         overflow[count+1].extend([-1, 0])
         # Calculate the lower bank station, the max stage OOB, and initialize the first OOB event
@@ -156,6 +158,7 @@ def writeOOB_DepthTime(outFile, overflow):
 print('done')
 
 def main():
+    getData()
     config = BankStation_config()
     (bank_ID, timestage_ID, maxstage_ID) = match_stations(config)
     overflow = OOB_DepthTime(bank_ID, timestage_ID, maxstage_ID)
