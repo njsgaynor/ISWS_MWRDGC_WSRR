@@ -20,7 +20,8 @@ def getData():
     popd=os.getcwd()
     dssvuePath = "C:/Program Files (x86)/HEC/HEC-DSSVue/"
     os.chdir(dssvuePath)
-    scriptPath = "C:/Users/Nicki/IdeaProjects/ISWS_MWRDGC_WSRR/"
+    #scriptPath = "C:/Users/Nicki/IdeaProjects/ISWS_MWRDGC_WSRR/"
+    scriptPath = "C:/Users/nschiff2/ISWS_MWRDGC_WSRR/"
     call(["HEC-DSSVue.cmd", "-s", scriptPath + "getStageData.py"], shell=True)
     os.chdir(popd)
     print("---------------getData end----------------")
@@ -28,28 +29,21 @@ def getData():
 def getTimeStage():
     print("getTimeStage")
     timestage = pickle.load(open("timestage.txt", 'rb'))
-    print(timestage)
-    print(len(timestage))
+    #print(timestage)
+    #print(len(timestage))
     # For every item in timestage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address.
-    delKey = []
-    for key in timestage:
+    keyList = timestage.keys()
+    for key in keyList:
         # Extract station ID from data address in DSS file
         u = key.split('/')
         try:
-            v = float(u[1])  # see if station ID includes a *
-            newKey = " ".join(u[0:1])  # river/reach
+            v = float(u[2])  # see if station ID includes a *
+            u[2] = str(round(float(u[2]), 2))
+            newKey = " ".join(u[1:3])  # river/reach
             timestage[newKey] = timestage.pop(key)
-            print("Renamed key: ", key)
         except ValueError:  # if station ID includes a * (is interpolated)
-            delKey.append(key)
-            print(key)
-    for k in delKey:
-        try:
             timestage.pop(key)
-            print("Popped: ", key)
-        except KeyError:
-            print("Key not found: ", key)
     return timestage
 
 def getBankElevations(bankFile):
@@ -69,7 +63,6 @@ def getBankElevations(bankFile):
         bankDict = {}
         count = 0
         for t in bank:
-            print(t)
             t[1] = " ".join(bank[count][0:2])
             t[1] = t[1].upper()
             try:
@@ -78,10 +71,9 @@ def getBankElevations(bankFile):
                     location = " ".join(t[1:3])
                     bankDict.update({location: list(t[-2:-1])})
             except ValueError:
+
                 pass
             count += 1
-        # Sort by station ID, then river/reach for matching with other data sets
-        #bank_ID.sort(key=itemgetter(1, 0))
         return bankDict
 
 def getMaxStage(timestage):
@@ -90,15 +82,23 @@ def getMaxStage(timestage):
     # For every item in maxstage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address. Timestage is used as the reference standard
     # for which stations to keep.
-    for key in maxstage:
+    print(maxstage)
+    print(type(maxstage))
+    print(len(maxstage))
+    keyList = maxstage.keys()
+    print(timestage.keys())
+    print(maxstage.keys())
+    for key in keyList:
         # Extract station ID from data address in DSS file
         u = key.split('/')
-        newKey = " ".join(u[0:1])  # river/reach
+        u[2] = str(round(float(u[2]), 2))
+        newKey = " ".join(u[1:3])  # river/reach
         if timestage.has_key(newKey):  # if station ID is not interpolated
             maxstage[newKey] = maxstage.pop(key)
         else:  # if station ID is interpolated
-            print(maxstage.pop(key))
-        return maxstage
+            maxstage.pop(key)
+            print("Pop maxstage:", newKey)
+    return maxstage
 
 def checkInputs(bank, timestage, maxstage):
     print("checkInputs")
@@ -117,8 +117,9 @@ def match_stations(config):
     timestage = getTimeStage()
     bank = getBankElevations(config.bankFileName)
     maxstage = getMaxStage(timestage)
-    checkInputs(bank, timestage, maxstage)
-    return (bank, timestage, maxstage)
+    #checkInputs(bank, timestage, maxstage)
+    #return (bank, timestage, maxstage)
+    return maxstage, timestage, bank
 
 def getStationID(item):
     print("getStationID")
@@ -141,34 +142,37 @@ def OOB_DepthTime(bank, timestage, maxstage):
         overflow[count+1].extend([-1, 0])
         # Calculate the lower bank station, the max stage OOB, and initialize the first OOB event
         lowbank = float(min(bank[item]))
-        OOB_depth = round(float(maxstage[item])-lowbank, 4)
-        if (not OOB_depth < 0):
-            overflow[item+1][2] = OOB_depth
-        else:
-            overflow[item+1][2] = -1
-        OOB_event = 1
-        # For each time
-        for stage in range(len(timestage[item])):
-            if float(timestage[item][stage]) > lowbank:
-                try:
-                    # Count the number of output times when river is out of banks
-                    overflow[item+1][OOB_event+2] += 1
-                except IndexError:
-                    # If OOB_event just started, add it to the list for current station
-                    overflow[item+1].extend([1])
-                    # Add column header if it doesn't exist yet
+        try:
+            OOB_depth = round(float(maxstage[item])-lowbank, 4)
+            if (not OOB_depth < 0):
+                overflow[item+1][2] = OOB_depth
+            else:
+                overflow[item+1][2] = -1
+            OOB_event = 1
+            # For each time
+            for stage in range(len(timestage[item])):
+                if float(timestage[item][stage]) > lowbank:
                     try:
-                        overflow[0][OOB_event+2]
+                        # Count the number of output times when river is out of banks
+                        overflow[item+1][OOB_event+2] += 1
                     except IndexError:
-                        overflow[0].extend(['OOB_Time'+str(OOB_event)])
-            elif (float(timestage[item][stage]) < lowbank) and (overflow[item+1][-1] > 0):
-                # If within banks after >=1 OOB event, increment event counter
-                try:
-                    overflow[item+1][OOB_event+2]
-                    OOB_event += 1
-                except IndexError:
-                    pass
-        count = count + 1
+                        # If OOB_event just started, add it to the list for current station
+                        overflow[item+1].extend([1])
+                        # Add column header if it doesn't exist yet
+                        try:
+                            overflow[0][OOB_event+2]
+                        except IndexError:
+                            overflow[0].extend(['OOB_Time'+str(OOB_event)])
+                elif (float(timestage[item][stage]) < lowbank) and (overflow[item+1][-1] > 0):
+                    # If within banks after >=1 OOB event, increment event counter
+                    try:
+                        overflow[item+1][OOB_event+2]
+                        OOB_event += 1
+                    except IndexError:
+                        pass
+            count = count + 1
+        except KeyError:
+            print("Key Error in maxstage: ", item)
     return overflow
 
 def writeOOB_DepthTime(outFile, overflow):
@@ -184,9 +188,14 @@ print('done')
 def main():
     getData()
     config = BankStation_config()
-    (bank_ID, timestage_ID, maxstage_ID) = match_stations(config)
-    overflow = OOB_DepthTime(bank_ID, timestage_ID, maxstage_ID)
+    maxstage, timestage, bank = match_stations(config)
+    #(bank, timestage, maxstage) = match_stations(config)
+    overflow = OOB_DepthTime(bank, timestage, maxstage)
     writeOOB_DepthTime(config.outFileName, overflow)
+    #print(maxstage.keys())
+    print(len(maxstage))
+    print(len(timestage))
+    print(len(bank))
 
 if __name__ == '__main__':
     main()
