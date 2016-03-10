@@ -20,15 +20,19 @@ def getData():
     popd=os.getcwd()
     dssvuePath = "C:/Program Files (x86)/HEC/HEC-DSSVue/"
     os.chdir(dssvuePath)
-    scriptPath = "C:/Users/nschiff2/ISWS_MWRDGC_WSRR/"
+    scriptPath = "C:/Users/Nicki/IdeaProjects/ISWS_MWRDGC_WSRR/"
     call(["HEC-DSSVue.cmd", "-s", scriptPath + "getStageData.py"], shell=True)
     os.chdir(popd)
     print("---------------getData end----------------")
 
 def getTimeStage():
+    print("getTimeStage")
     timestage = pickle.load(open("timestage.txt", 'rb'))
+    print(timestage)
+    print(len(timestage))
     # For every item in timestage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address.
+    delKey = []
     for key in timestage:
         # Extract station ID from data address in DSS file
         u = key.split('/')
@@ -36,12 +40,20 @@ def getTimeStage():
             v = float(u[1])  # see if station ID includes a *
             newKey = " ".join(u[0:1])  # river/reach
             timestage[newKey] = timestage.pop(key)
+            print("Renamed key: ", key)
         except ValueError:  # if station ID includes a * (is interpolated)
-            print(timestage.pop(key))
-            pass
+            delKey.append(key)
+            print(key)
+    for k in delKey:
+        try:
+            timestage.pop(key)
+            print("Popped: ", key)
+        except KeyError:
+            print("Key not found: ", key)
     return timestage
 
 def getBankElevations(bankFile):
+    print("getBankElevations")
     # Open CSV file that contains the bank station elevations for each station in the Stony Creek watershed and read whole
     # file into a list.
     #   The CSV was copy-pasted from HEC-RAS (Profile output table) to Excel (data and headers) and saved as a CSV file.
@@ -54,23 +66,26 @@ def getBankElevations(bankFile):
         #   The first three elements are river, reach, and station ID. Station ID needs to be converted to a float.
         #   Then concatenate river and reach into a single, uppercase element and assign to element 1.
         #   Store river/reach, station ID, left bank, and right bank for each station in bank_ID.
-        bank_ID = []
+        bankDict = {}
         count = 0
         for t in bank:
+            print(t)
             t[1] = " ".join(bank[count][0:2])
             t[1] = t[1].upper()
             try:
-                t[2] = float(t[2])
-                if t[2] > 0:
-                    bank_ID.append(t[1:])
+                r = float(t[2])
+                if r > 0:
+                    location = " ".join(t[1:3])
+                    bankDict.update({location: list(t[-2:-1])})
             except ValueError:
                 pass
             count += 1
         # Sort by station ID, then river/reach for matching with other data sets
-        bank_ID.sort(key=itemgetter(1, 0))
-        return bank_ID
+        #bank_ID.sort(key=itemgetter(1, 0))
+        return bankDict
 
 def getMaxStage(timestage):
+    print("getMaxStage")
     maxstage = pickle.load(open("maxstage.txt", 'rb'))
     # For every item in maxstage (each station in Stony Creek), keep the data only if it is not an interpolated
     # station. The station ID is the second item in the data address. Timestage is used as the reference standard
@@ -86,16 +101,19 @@ def getMaxStage(timestage):
         return maxstage
 
 def checkInputs(bank, timestage, maxstage):
+    print("checkInputs")
     # Debug which stations don't match between maxstage, bank, and timestage
     for y in maxstage:
-        assert bank.has_key(y)
-        assert timestage.has_key(y)
+        #assert bank.has_key(y)
+        #assert timestage.has_key(y)
+        pass
     # Used to check that each data set has the same number of stations (debugging)
     print('maxstage ',len(maxstage))
     print('timestage ',len(timestage))
     print('bank ',len(bank))
 
 def match_stations(config):
+    print("match_stations")
     timestage = getTimeStage()
     bank = getBankElevations(config.bankFileName)
     maxstage = getMaxStage(timestage)
@@ -103,17 +121,21 @@ def match_stations(config):
     return (bank, timestage, maxstage)
 
 def getStationID(item):
+    print("getStationID")
     temp = item.split(' ')
-    return temp[0:temp[len(temp)-2]], temp[len(temp)-1]
+    print(temp)
+    return temp[0:(len(temp)-2)], temp[len(temp)-1]
 
 def OOB_DepthTime(bank, timestage, maxstage):
+    print("OOB_DepthTime")
     # By this point maxstage_ID, timestage_ID, and bank_ID should contain all the same stations.
     # River/reach/ID will be checked each time to make sure this is the case. Then calculate how far the max stage
     # exceeds the lower bank station and for how many hours the stage/water surface elevation exceeds the lower bank
     # station.
     overflow = [['River_Reach', 'Station_ID', 'OOB_Depth1', 'OOB_Time1']]
+    count = 0
     # For each station
-    for item in bank, count in len(bank):
+    for item in bank:
         riverReach, stationID = getStationID(item)
         overflow.append([riverReach, stationID])
         overflow[count+1].extend([-1, 0])
@@ -146,9 +168,11 @@ def OOB_DepthTime(bank, timestage, maxstage):
                     OOB_event += 1
                 except IndexError:
                     pass
+        count = count + 1
     return overflow
 
 def writeOOB_DepthTime(outFile, overflow):
+    print("writeOOB_DepthTime")
     # Write overflow to a CSV file for further analysis or viewing in Excel
     with open(outFile, 'wb') as output:
         writer = csv.writer(output)
