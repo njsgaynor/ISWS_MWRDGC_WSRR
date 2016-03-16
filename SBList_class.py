@@ -1,18 +1,17 @@
-class SBDict(dict):
+class SBList(list):
     def __init__(self):
-        super(dict, self).__init__()
+        super(list, self).__init__()
 
-    def add(self, x):
-        self.update(x)
+    def newItem(self, n, rr, a, tN):
+        ditem = {}
+        ditem["tableName"] = tN
+        ditem["releaseRate"] = rr
+        ditem["area"] = a
+        ditem["name"] = n
+        self.append(ditem)
 
     def remove(self, x):
         del self[x]
-
-    def getKeys(self):
-        return self.keys()
-
-    def getValues(self):
-        return self.values()
 
     def writeSbPairs(self, sbOut):
         import json

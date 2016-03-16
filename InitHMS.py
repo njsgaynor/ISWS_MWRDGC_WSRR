@@ -7,8 +7,6 @@
 
 # add Java directories to system path
 import sys
-import os
-from subprocess import call
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/bin/java.exe")
 sys.path.append("C:/Program Files/Java/jdk1.8.0_72/src/java")
 sys.path.append("C:/Program Files/Java/javahelp-2.0.05.jar")
@@ -21,7 +19,6 @@ def updatePdataFile(pd, pdatasink):
 
 
 def readBasinFile(ws):
-    print('readBasinFile')
     # import Python modules
     import shutil
 
@@ -35,22 +32,19 @@ def readBasinFile(ws):
     from hecElements.BasinSchema_class import BasinSchema
     from TableNames_class import TableNames
     from hecElements.Pdata_class import Pdata
-    from SBDict_class import SBDict
+    from SBList_class import SBList
 
     pdatabackup = ws['pdatafile'] + ".back"
     tableFile = "table_names.json"
     subbasinFile = "subbasin_records.json"
     # Make backup of *.pdata file
-#    with open(ws['pdatafile'], 'ab') as pdatasink, open(pdatabackup, 'wb') as pdatacopy:
-#        shutil.copyfileobj(pdatasink, pdatacopy)
     shutil.copyfile(ws['pdatafile'], pdatabackup)
     # Read elements from *.basin file and split the subbasins; write to new *.basin file
     # Also create list of table names (txt) and and subbasins/release rates (JSON) and write to files for later use
     with open(ws['basinin'], 'rb') as basinsrc, open(ws['basinout'], 'wb') as basinsink, open(ws['pdatafile'], 'ab') \
             as pdatasink:
         tableList = TableNames()
-
-        sbAll = SBDict()
+        sbAll = SBList()
         recordnum = 0
         currentLine = ' '
         while not currentLine == '':
@@ -70,7 +64,8 @@ def readBasinFile(ws):
                                                       ws['curvenumber'], ws['releaserate'])
                     tableList.append([b2.getIdentifier(), soname, b2.area.getAsFloat(), ws['releaserate']])
                     Pdata.newPdata(soname, pdatasink, ws['dssfile'])
-                    sbAll.add({b.getIdentifier(): b.rlsrate.getAsFloat(), b2.getIdentifier(): b2.rlsrate.getAsFloat()})
+                    sbAll.newItem(b.getIdentifier(), float(ws['releaserate']), b.area.getAsFloat(), '')
+                    sbAll.newItem(b2.getIdentifier(), float(ws['releaserate']), b2.area.getAsFloat(), soname)
                 elif currentLine.startswith('Junction:'):
                     b = Junction.readJunction(currentLine, basinsrc, basinsink)
                 elif currentLine.startswith('Reservoir:'):
@@ -95,7 +90,6 @@ def readBasinFile(ws):
                         sbAll.writeSbPairs(subbasinFile)
                     except IOError:
                         print("Cannot write subbasin_records.json")
-                    print(tableList)
                     return tableList
                 else:
                     print(currentLine)
@@ -106,13 +100,8 @@ def readBasinFile(ws):
 
 
 def modMetFile(metFile, metData, hmsPath, sbList):
-    import json
     metFileName = hmsPath + "/" + metFile
-    print(type(sbList))
-#    tableFileName = scriptPath + "/" + "table_names.json"
-    with open(metFileName, 'ab') as metFileObj:#, open(tableFileName, 'rb') as subbasins:
-#        sbList = json.load(subbasins)
-#        print(subbasins)
+    with open(metFileName, 'ab') as metFileObj:
         metFileObj.write('\n\n')
         for subbasin in sbList:
             lines = ['Subbasin: ', subbasin[0], '\n    Gage: ', metData, '\n\n    Begin Snow: None\nEnd:\n\n']
@@ -123,7 +112,6 @@ def main(config):
     metFile = config.hmsMetFile + ".met"
     ws = Subwatershed(config)
     tableList = readBasinFile(ws)
-    print(type(tableList))
     modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), tableList)
 
 
