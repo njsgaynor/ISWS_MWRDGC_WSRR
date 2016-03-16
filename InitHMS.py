@@ -49,6 +49,7 @@ def readBasinFile(ws):
     with open(ws['basinin'], 'rb') as basinsrc, open(ws['basinout'], 'wb') as basinsink, open(ws['pdatafile'], 'ab') \
             as pdatasink:
         tableList = TableNames()
+
         sbAll = SBDict()
         recordnum = 0
         currentLine = ' '
@@ -86,8 +87,15 @@ def readBasinFile(ws):
                     pass
                 elif currentLine == '':
                     print("End of file " + ws['basinin'] + ".")
-                    tableList.writeTableFile(tableFile)
-                    sbAll.writeSbPairs(subbasinFile)
+                    try:
+                        tableList.writeTableFile(tableFile)
+                    except IOError:
+                        print("Cannot write table_names.json")
+                    try:
+                        sbAll.writeSbPairs(subbasinFile)
+                    except IOError:
+                        print("Cannot write subbasin_records.json")
+                    print(tableList)
                     return tableList
                 else:
                     print(currentLine)
@@ -100,6 +108,7 @@ def readBasinFile(ws):
 def modMetFile(metFile, metData, hmsPath, sbList):
     import json
     metFileName = hmsPath + "/" + metFile
+    print(type(sbList))
 #    tableFileName = scriptPath + "/" + "table_names.json"
     with open(metFileName, 'ab') as metFileObj:#, open(tableFileName, 'rb') as subbasins:
 #        sbList = json.load(subbasins)
@@ -114,6 +123,7 @@ def main(config):
     metFile = config.hmsMetFile + ".met"
     ws = Subwatershed(config)
     tableList = readBasinFile(ws)
+    print(type(tableList))
     modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), tableList)
 
 
