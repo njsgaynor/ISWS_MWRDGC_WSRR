@@ -90,13 +90,30 @@ def readBasinFile(ws):
                         sbAll.writeSbPairs(subbasinFile)
                     except IOError:
                         print("Cannot write subbasin_records.json")
-                    return tableList
+                    return tableList, sbAll
                 else:
                     print(currentLine)
                     raise RuntimeError("Invalid subwatershed element. Check input *.basin file.")
             except IOError:
                 print("Cannot read file " + ws['basinin'] + " or " + ws['basinout'] + ".")
                 return
+
+
+def readStationList(stationFileName):
+    with open(stationFileName, 'rb') as stationFile:
+        stationList = stationFile.readlines()
+    for station in range(len(stationList)):
+        print(repr(stationList[station]))
+        stationList[station] = stationList[station].strip('\r\n')
+        print(repr(stationList[station]))
+    return stationList
+
+
+def writeJsonInput(subbasinList, stationList, inputFileName):
+    import json
+    outputDS = {"subbasins": subbasinList, "ditchNames": stationList}
+    with open(inputFileName, 'wb') as inputFile:
+        json.dump(outputDS, inputFile)
 
 
 def modMetFile(metFile, metData, hmsPath, sbList):
@@ -111,7 +128,9 @@ def modMetFile(metFile, metData, hmsPath, sbList):
 def main(config):
     metFile = config.hmsMetFile + ".met"
     ws = Subwatershed(config)
-    tableList = readBasinFile(ws)
+    tableList, subbasinList = readBasinFile(ws)
+    stationList = readStationList(config.stationFileName)
+    writeJsonInput(subbasinList, stationList, config.inputFileName)
     modMetFile(metFile, config.hmsGageName, config.getHmsProjectPath(), tableList)
 
 
